@@ -1,6 +1,178 @@
 Overall:
-	▫ Think of idea
-	▫ Think of all features that are part of idea
-	▫ Think of all technologies required
+	✔ Think of idea @started(25-08-07 11:08) @done(25-08-07 11:08) @lasted(17s)
+	✔ Think of all features that are part of idea @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(48s)
+	✔ Think of all technologies required @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(59s)
 	▫ List out MVP
 	▫ Build
+
+	▫ Person A has {x, y, z} with value {a, b, c}
+	▫ Person A puts job posting with pay of d
+	▫ Person B completes job, 
+	
+Idea:
+	UI/UX:
+		▫ Simple, clean, modern
+		▫ Mobile first, responsive
+		▫ Landing page
+			▫ Very simple landing page with no scrolling
+			▫ Showing example of a trade
+		▫ Dashboard
+			☐ See below
+			▫ onboarding flow
+				▫ Sign up
+				▫ Create profile
+					▫ Name
+					▫ Location (city, state)
+					▫ Profile image
+					▫ Inventory of offerings (optional)
+						▫ Description
+						▫ Item cost
+						▫ Images @low
+				▫ Set preferences (optional)
+					▫ Distance willing to travel
+					▫ Types of jobs willing to do
+		▫ Structure:
+			/app
+				/layout.tsx
+				/page.tsx
+				/dashboard
+					/layout.tsx
+					/page.tsx
+					/offers/page.tsx
+					/inventory/page.tsx
+					/inbox/page.tsx
+					/settings/page.tsx
+			/api/..
+			/components
+				/auth
+					todo
+				/navigation
+					Navbar.tsx
+					Sidebar.tsx
+				Heading.tsx
+				/cards
+					JobCard.tsx
+					OfferCard.tsx
+					ProfileCard.tsx
+				...
+			/lib
+				prisma.ts
+				auth.ts
+				db.ts
+				...
+			/styles
+				globals.css
+				components.css
+				...
+		
+	Features:
+		User:
+			▫ User
+				▫ Name
+				▫ Contact information
+			▫ Hirer user
+				▫ Hiring rating
+				▫ Job postings
+				▫ Inventory of offerings
+			▫ Worker user
+				▫ Working rating
+				▫ Completed jobs @low
+			▫ Authentication
+				▫ Sign up (email + google)
+				▫ Sign in (email + google)
+				▫ Sign out
+			Rating:
+				▫ Score
+				▫ Text
+		Job Posting:
+			▫ Job posting page
+				▫ List of jobs
+			▫ Job post
+				▫ Title
+				▫ Hirer
+					▫ Hirer name
+					▫ Hirer rating
+					▫ Hirer inventory (popup)
+				▫ Location
+				▫ Status
+				▫ Application logic
+				Application logic:
+					▫ Apply now button
+					▫ Applied workers selection page
+						▫ List of applied workers
+				Worker profile:
+					▫ Name
+					▫ Contact info
+					Compact:
+						▫ Average rating value
+					Expanded:
+						▫ List of rating value and text
+				Status:
+					▫ Searching
+					▫ In progress
+					▫ Completed
+		In Progress Jobs:
+			▫ Jobs that you hired someone to do
+			▫ Jobs that you are doing
+				▫ Select from hirer inventory
+		Completed Jobs:
+			▫ Jobs that you hired someone
+		Inventory:
+			▫ Adding/removing/changing offerings
+			Offerings:
+				▫ Description (can be service or good)
+				▫ Offering cost
+				▫ Number of offerings (number or infinity)
+				▫ Images @low
+	
+MVP:
+	▫ User authentication flow
+	▫ Hirer inventory
+	▫ Hirer creates job posting
+	▫ Worker signs up for job posting
+	▫ Hirer and worker rate
+
+Database:
+	User:
+		▫ Name
+		▫ "How to contact me for jobs"
+		▫ Hirer ratings
+		▫ Worker ratings
+		▫ Inventory
+		▫ Jobs
+	Jobs:
+		▫ Title + description
+		▫ Location
+		▫ Hirer
+		▫ Applicants (list of users)
+		▫ Worker
+		▫ Status: Unmatched, In progress, Complete
+	Rating:
+		▫ Value
+		▫ Text
+	Inventory:
+		▫ User
+		▫ Offerings
+	Offerings:
+		▫ Description
+		▫ Offering cost
+		▫ Number of offerings (number or infinity)
+
+Finished:
+	Old Ideas:
+		▫ A community map resource map
+			▫ Lists food banks
+			▫ Public wifi
+			▫ Job centers
+			▫ Community editablec showers
+		▫ GigConnect: Allows people to put up gigs for work using maps locations
+			▫ Map features
+			▫ Workers
+				▫ Reliability
+			▫ Job posting
+				▫ List of workers applied
+			▫ Job searching
+				▫ Sort by location
+		▫ DebtDecoder – Explains Loan Terms in Plain Language
+			▫ Users can upload pictures of their loan documents or debt offers.
+			▫ The app parses and translates it into plain-language "What This Really Means" statements, e.g., “You’ll pay double if you miss 2 payments.”     
