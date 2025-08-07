@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 
-interface MessageBoxProps {
+interface MessageProps {
   children: React.ReactNode;
   color: 'blue' | 'red' | 'green' | 'gray';
   className?: string;
 }
 
-export default function MessageBox({ children, color, className = '' }: MessageBoxProps) {
+export default function Message({ children, color, className = '' }: MessageProps) {
   const [visible, setVisible] = useState(true);
 
   // default is white

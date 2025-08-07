@@ -29,12 +29,31 @@ interface SignInParams {
 
 export default function SignIn(params: SignInParams) {
   const router = useRouter();
-  const { signIn: signInAuth } = useAuth();
+  const { signIn: signInAuth, getUser } = useAuth();
 
   const [status, setStatus] = useState<{ status: 'success' | 'success-page' | 'error' | 'null' | 'loading' | 'page_loading'; message: string }>({
     status: 'null',
     message: '',
   });
+
+  // Check if user is signed in
+  useEffect(() => {
+    async function exec() {
+      const user = await getUser();
+
+      if (user) {
+        setStatus({ status: 'success', message: 'User already signed in' });
+      }
+    }
+    exec();
+  }, []);
+
+  // Check for success -> redirect to default page
+  useEffect(() => {
+  if (status.status === 'success') {
+    router.push(`/${config.app.default_route}?message=${encodeURIComponent(status.message)}`)
+  }
+}, [status.status, status.message, router])
 
   // form fields
   const [email, setEmail] = useState('');
@@ -57,9 +76,9 @@ export default function SignIn(params: SignInParams) {
         return;
       }
 
-      setStatus({ status: 'success-page', message: '' });
+      setStatus({ status: 'success', message: 'Successfully signed in' });
     } catch (error: any) {
-      setStatus({ status: 'error', message: 'There was an erorr signing in. Please try again' });
+      setStatus({ status: 'error', message: await parseError(error.message, error.code) });
     }
   }
 
@@ -120,7 +139,7 @@ export default function SignIn(params: SignInParams) {
   }, []);
 
   if (status.status === 'page_loading') {
-    return <Loading message={'Loading...'}></Loading>;
+    return <Loading message={null} />;
   }
 
   return (

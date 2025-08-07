@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 // import prisma from '@/lib/prisma';
 
+// create db user after email sign up
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   // TODO: add back
   console.log('PROFILE ID GET REQUEST SUCESS - add back actual logic tho');

@@ -1,7 +1,12 @@
 "use client";
+import FloatingMessage from '@/components/ui/floating-message';
+import { useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function TradeSpaceLanding() {
+  const searchParams = useSearchParams();
+  const message = searchParams.get('message');
+
   const [selectedTrade, setSelectedTrade] = useState('Fresh vegetables from garden');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -21,6 +26,7 @@ export default function TradeSpaceLanding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-orange-300 relative overflow-hidden font-sans">
+      {message && <FloatingMessage color={'blue'}>{message}</FloatingMessage>}
 
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-300/40 via-transparent to-purple-300/40"></div>
