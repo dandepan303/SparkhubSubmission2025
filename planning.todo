@@ -1,9 +1,9 @@
-Overall:
-	✔ Think of idea @started(25-08-07 11:08) @done(25-08-07 11:08) @lasted(17s)
-	✔ Think of all features that are part of idea @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(48s)
-	✔ Think of all technologies required @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(59s)
-	✔ List out MVP @started(25-08-07 14:46) @done(25-08-07 14:46) @lasted(29s)
-	▫ Build @started(25-08-07 14:46)
+MVP:
+	✔ User authentication flow @started(25-08-07 19:51) @done(25-08-07 19:51) @lasted(41s)
+	▫ Hirer inventory
+	▫ Hirer creates job posting
+	▫ Worker signs up for job posting
+	▫ Hirer and worker rate
 	
 Idea:
 	UI/UX:
@@ -120,13 +120,7 @@ Idea:
 				▫ Offering cost
 				▫ Number of offerings (number or infinity)
 				▫ Images @low
-	
-MVP:
-	▫ User authentication flow
-	▫ Hirer inventory
-	▫ Hirer creates job posting
-	▫ Worker signs up for job posting
-	▫ Hirer and worker rate
+
 
 Database:
 	✔ Complete schema @started(25-08-07 16:23) @done(25-08-07 16:23) @lasted(46s)
@@ -154,6 +148,13 @@ Database:
 		▫ Description
 		▫ Offering cost
 		▫ Number of offerings (number or infinity)
+
+Overall:
+	✔ Think of idea @started(25-08-07 11:08) @done(25-08-07 11:08) @lasted(17s)
+	✔ Think of all features that are part of idea @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(48s)
+	✔ Think of all technologies required @started(25-08-07 11:54) @done(25-08-07 11:54) @lasted(59s)
+	✔ List out MVP @started(25-08-07 14:46) @done(25-08-07 14:46) @lasted(29s)
+	▫ Build @started(25-08-07 14:46)
 
 -----------------------------------------------------------------------------------------------
 

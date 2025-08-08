@@ -1,8 +1,10 @@
-Dean:
+Dean (whatever order u wanna do them):
 	▫ Onboarding page
-		▫ 
 	▫ Finish sign in page
 	▫ Make components/ui/message & components/ui/floating-message look better
+	▫ Loading status to sign up form
+
+Kevin:
 
 Finish:
 	▫ middleware private routes

@@ -1,11 +1,13 @@
 'use client';
 import FloatingMessage from '@/components/ui/floating-message';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState } from 'react';
 
 export default function TradeSpaceLanding() {
   const searchParams = useSearchParams();
   const message = searchParams.get('message');
+
+  const router = useRouter();
 
   const [selectedTrade, setSelectedTrade] = useState('Fresh vegetables from garden');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -13,11 +15,11 @@ export default function TradeSpaceLanding() {
   const tradeOptions = ['Fresh vegetables from garden', 'Guitar lesson (1 hour)', 'Car wash and vacuum'];
 
   const handleSignIn = () => {
-    window.location.href = '/auth/sign-in';
+    router.push('/auth/sign-in');
   };
 
   const handleSignUp = () => {
-    window.location.href = '/auth/sign-up';
+    router.push('/auth/sign-up');
   };
 
   return (

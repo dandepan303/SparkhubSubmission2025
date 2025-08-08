@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import FloatingMessage from '../ui/floating-message';
-import { CreateUserArgs, SignUpArgs } from '@/types';
+import { GoogleSignUpArgs, GoogleSignUpRet, EmailSignUpArgs } from '@/types';
 import axios from 'axios';
 import { parseError } from '@/lib/util/server_util';
 import { supabase } from '@/lib/supabase/client';
@@ -13,11 +13,14 @@ import dynamic from 'next/dynamic';
 import Message from '../ui/message';
 import { config } from '@/lib/config';
 import { useRouter } from 'next/navigation';
+import { useAuth } from './auth-provider';
 
 const GoogleAuthButton = dynamic(() => import('@/components/auth/google-button'), { ssr: false });
 
 export default function SignUp() {
   const router = useRouter();
+
+  const { session } = useAuth();
 
   const [status, setStatus] = useState<{ status: 'success' | 'error' | 'loading' | 'page-loading' | 'null'; message: string }>({
     status: 'page-loading',
@@ -35,7 +38,10 @@ export default function SignUp() {
   // Checks for success flag
   useEffect(() => {
     if (status.status === 'success') {
-      router.push('/profile/contactInfo');
+      const timeout = setTimeout(() => {
+        router.push('/onboarding');
+      }, 1000);
+      return () => clearTimeout(timeout);
     }
   }, [status, router]);
 
@@ -79,7 +85,7 @@ export default function SignUp() {
   const handleEmailSignup = async (email: string, password: string, name: string) => {
     setStatus({ status: 'loading', message: 'Loading...' });
 
-    const reqBody: SignUpArgs = {
+    const reqBody: EmailSignUpArgs = {
       email: email,
       password: password,
       name: name,
@@ -89,18 +95,18 @@ export default function SignUp() {
     setTimeout(() => controller.abort(), 1000 * 60);
 
     axios
-      .post(`${process.env.NEXT_PUBLIC_APP_URL}/api/signup`, reqBody, { signal: controller.signal })
+      .post(`/api/signup/email`, reqBody, { signal: controller.signal, withCredentials: true })
       .then(res => {
         setStatus({ status: res.data.status, message: res.data.message });
       })
       .catch(err => {
         if (err.response) {
-          console.log('Page /signup signup error: ', err);
+          console.log('app/signup signup error');
           (async () => {
             setStatus({ status: 'error', message: await parseError(err.response.data.message) });
           })();
         } else {
-          console.log('Page /signup signup error: ', err);
+          console.log('app/signup signup error');
           (async () => {
             setStatus({ status: 'error', message: await parseError(err.message) });
           })();
@@ -113,6 +119,7 @@ export default function SignUp() {
     setStatus({ status: 'loading', message: 'Signing up with Google...' });
 
     try {
+      // Create auth profile
       const { data: auth_data, error: auth_error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: response.credential,
@@ -122,16 +129,15 @@ export default function SignUp() {
         setStatus({ status: 'error', message: await parseError(auth_error.message, auth_error.code) });
         return;
       }
-
       if (!auth_data.user) {
         setStatus({ status: 'error', message: 'There was an issue signing up with Google' });
         return;
       }
 
-      // Check if this is a new user by trying to create their profile
+      // Create db profile
       setStatus({ status: 'loading', message: 'Setting up your account...' });
 
-      const reqBody: CreateUserArgs = {
+      const reqBody: GoogleSignUpArgs = {
         userId: auth_data.user.id,
         email: auth_data.user.email,
         name: auth_data.user.user_metadata?.full_name,
@@ -139,25 +145,21 @@ export default function SignUp() {
 
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60);
+      const { data: res }: { data: GoogleSignUpRet } = await axios.post(`/api/signup/google`, reqBody, {
+        signal: controller.signal,
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+        validateStatus: () => true, // prevent axios from throwing its wrapper errors
+      });
 
-      try {
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/profile`, reqBody, {
-          signal: controller.signal,
-        });
-
-        setStatus({ status: 'success', message: 'Successfully signed up with Google! Welcome to TradeSpace.' });
-
-        // redirect after successful signup
-        setTimeout(() => {
-          window.location.href = config.app.default_route;
-        }, 2000);
-      } catch (err: any) {
-        console.log('Page /signup google auth create user error: ', err);
-        setStatus({ status: 'error', message: await parseError(err.message) });
+      if (res.status === 'error') {
+        setStatus({ status: 'error', message: res.message });
       }
-    } catch (error: any) {
-      console.log('Google auth error: ', error);
-      setStatus({ status: 'error', message: 'There was an error with Google authentication. Please try again.' });
+
+      setStatus({ status: 'success', message: 'Successfully signed up with Google! Welcome to TradeSpace' });
+    } catch (err: any) {
+      console.log('Google auth error: ', await parseError(err.message, err.code));
+      setStatus({ status: 'error', message: 'There was an issue with Google. Please try again.' });
     }
   }, []);
 

@@ -3,8 +3,6 @@
 import React, { useCallback } from 'react';
 import { useState, useEffect } from 'react';
 
-import axios from 'axios';
-
 import dynamic from 'next/dynamic';
 
 import { useRouter } from 'next/navigation';
@@ -27,7 +25,15 @@ export default function SignIn(params: SignInParams) {
   const router = useRouter();
   const { signIn: signInAuth } = useAuth();
 
-  const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading'; message: string }>({status: 'page-loading', message: ''});
+  const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading'; message: string }>({
+    status: 'page-loading',
+    message: '',
+  });
+
+  // Set page loaded
+  useEffect(() => {
+    setStatus({ status: 'null', message: '' });
+  }, []);
 
   // Check for success -> redirect to default page
   useEffect(() => {

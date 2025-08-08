@@ -104,7 +104,7 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
         delete window.googleAuthCallback;
       }
     };
-  }, [buttonContext, buttonText, setStatus]);
+  }, [buttonContext, buttonText, setStatus, initAttemptedRef, handleGoogleAuthCallbackRef, config.google.client_id]);
 
   return (
     <div className="flex items-center justify-center">

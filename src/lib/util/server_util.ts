@@ -11,7 +11,7 @@ export async function parseError(message: string, code?: string): Promise<string
   }
 
   // supabase
-  if (message === 'email_not_confirmed') retMessage = 'Please confirm your email';
+  if (message === 'email_not_confirmed') retMessage = 'Please confirm your email before signing in';
   if (message === 'Auth session missing!') retMessage = 'Please sign in first';
   if (code === 'weak_password')
     retMessage = 'Password must contain: lower and upper case letters, at least 1 number, and at least 1 special character';
@@ -30,6 +30,6 @@ export async function parseError(message: string, code?: string): Promise<string
   // google
   if (code === 'identity_already_exists') retMessage = 'That account is already linked to another account. Try another account';
 
-  console.log('ParseError:', code, message.slice(0, 200), 'ParseErrorClose');
+  console.log('\nParseError:', code, message.slice(0, 200), '\n -> \n', retMessage, '\nParseErrorClose');
   return retMessage;
 }

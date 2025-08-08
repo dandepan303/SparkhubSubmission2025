@@ -16,8 +16,6 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<AppUser>) => Promise<void>;
-  getAuthLevel: () => Promise<{ currentAuthLevel: 'aal0' | 'aal1' | 'aal2' | null; requiredAuthLevel: 'aal1' | 'aal2' | null; error: Error | null }>;
-  getUser: () => Promise<any>;
   version: number;
 }
 
@@ -93,7 +91,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchProfile = async (userId: string) => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/api/profile/${userId}`);
+      const res = await axios.get(`/api/profile/${userId}`, {
+        validateStatus: () => true,
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
       if (res.data && res.data.user) {
         setProfile(res.data.user);
       } else {
@@ -158,34 +160,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const getAuthLevel = async () => {
-    if (!user) return { currentAuthLevel: 'aal0' as const, requiredAuthLevel: null, error: null };
-
-    try {
-      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-
-      if (error) {
-        return { currentAuthLevel: null, requiredAuthLevel: null, error: error };
-      }
-
-      return { currentAuthLevel: data.currentLevel as 'aal0' | 'aal1' | 'aal2', requiredAuthLevel: data.nextLevel as 'aal1' | 'aal2', error: null };
-    } catch (error) {
-      return { currentAuthLevel: null, requiredAuthLevel: null, error: error as Error };
-    }
-  };
-
-  const getUser = async () => {
-    try {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        return null;
-      }
-      return data.user;
-    } catch (error) {
-      return null;
-    }
-  };
-
   const value = {
     user,
     profile,
@@ -195,8 +169,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signUp,
     signOut,
     updateProfile,
-    getAuthLevel,
-    getUser,
     version,
   };
 

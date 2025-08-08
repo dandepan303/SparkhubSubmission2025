@@ -1,14 +1,24 @@
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { parseError } from '@/lib/util/server_util';
 import { NextResponse } from 'next/server';
 // import prisma from '@/lib/prisma';
 
 // get db user
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
-  // Request parameter verification
-  const id = (await context.params).id;
-
   try {
+    // getting current user id
+    const supabase = await createServerSupabaseClient();
+
+    const auth = request.headers.get('authorization');
+    const token = auth?.split(' ')[1];
+    const { data, error } = await supabase.auth.getUser(token);
+
+    if (!data?.user) return NextResponse.json({ status: 'error', message: 'Please sign in first' }, { status: 401 });
+    if (error) return NextResponse.json({ status: 'error', message: await parseError(error.message, error.code) }, { status: 401 });
+
+    // fetching db data
     const user = await prisma.user.findUnique({
-      where: { id: id },
+      where: { id: data.user.id },
     });
 
     if (!user) {
