@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { createAdminSupabaseClient } from '@/lib/supabase/admin';
-// import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma/prisma';
 import { parseError } from '@/lib/util/server_util';
 import { SignUpRet } from '@/types';
 
@@ -53,22 +53,22 @@ export async function POST(request: Request) {
     auth_data_ = auth_data;
 
     // DB sign up
-    // try {
-    //   const db_data = await prisma.user.upsert({
-    //     where: { id: auth_data.user.id },
-    //     create: {
-    //       id: auth_data.user.id,
-    //       email: email,
-    //       name: name,
-    //     },
-    //       update: {
-    //       name: name,
-    //     },
-    //   });
-    // } catch (error: any) {
-    //   const retBody: SignUpRet = { status: 'error', message: await parseError(error.message, error.code) };
-    //   return NextResponse.json(retBody, { status: 400 });
-    // }
+    try {
+      const db_data = await prisma.user.upsert({
+        where: { id: auth_data.user.id },
+        create: {
+          id: auth_data.user.id,
+          email: email,
+          name: name,
+        },
+        update: {
+          name: name,
+        },
+      });
+    } catch (error: any) {
+      const retBody: SignUpRet = { status: 'error', message: await parseError(error.message, error.code) };
+      return NextResponse.json(retBody, { status: 400 });
+    }
 
     user_created = true;
 

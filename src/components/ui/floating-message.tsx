@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
 
@@ -35,7 +35,7 @@ export default function FloatingMessage({ children, color, className = '' }: Flo
     border = 'border-red-400';
     text = 'text-red-800';
   }
-  
+
   return (
     <div
       className={`absolute top-10 right-10 left-10 z-100 rounded-xl ${bg} border-[0.12rem] ${border} px-4 py-2.5 ${text} flex items-center justify-between shadow-md ${className}`}

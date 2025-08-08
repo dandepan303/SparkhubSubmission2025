@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React, { useEffect, useState } from 'react';
 
@@ -49,9 +49,7 @@ export default function Message({ children, color, className = '' }: MessageProp
       title="Click to dismiss">
       <>
         {children}
-        <span className="rounded py-1 text-lg font-bold text-gray-500 transition hover:bg-gray-200 hover:text-gray-700">
-          ×
-        </span>
+        <span className="rounded py-1 text-lg font-bold text-gray-500 transition hover:bg-gray-200 hover:text-gray-700">×</span>
       </>
     </div>
   );

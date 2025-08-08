@@ -2,13 +2,13 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { Role } from '@/types';
 import { isAuthorized } from '@/lib/util/util';
+import { privateRoutes } from '../config';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
 
-  // If the env vars are not set, skip middleware check. You can remove this once you setup the project.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return supabaseResponse;
   }
@@ -34,23 +34,11 @@ export async function updateSession(request: NextRequest) {
 
   // START OF CODE YOU CAN EDIT
 
-  /* 
-		if the user is not signed in and is trying to access a non-guest (non-signed in) route, redirect them to sign in
-		if the user is signed in but does not have the authorization, redirect them to home with a message
-		otherwise allow the request
-	*/
-
   // Easy of development - if enable -> TODO: REMOVE
   if (process.env.NODE_ENV === 'development') {
     console.log('middleware skipped due to development environment');
     return supabaseResponse;
   }
-
-  const privateRoutes: Record<string, Role> = {
-    '/api': 'user',
-    '/dashboard': 'user',
-    '/developer': 'admin',
-  };
 
   const pathname = request.nextUrl.pathname;
 
@@ -59,13 +47,11 @@ export async function updateSession(request: NextRequest) {
     // if requested reoute is protected, then check authorization
     if (pathname.startsWith(route)) {
       if (!user) {
-        console.log('middleware no user redirect'); // TODO: REMOVE
         const url = request.nextUrl.clone();
         url.pathname = '/signin';
         return NextResponse.redirect(url);
       } else {
         if (isAuthorized(user?.role, requiredRole)) {
-          console.log('middleware user redirect'); // TODO: REMOVE
           const url = request.nextUrl.clone();
           url.pathname = '/';
           url.searchParams.set('message', 'You do not have access to this page');
@@ -76,19 +62,6 @@ export async function updateSession(request: NextRequest) {
   }
 
   // END OF CODE YOU CAN EDIT
-
-  // IMPORTANT: You *must* return the supabaseResponse object as it is.
-  // If you're creating a new response object with NextResponse.next() make sure to:
-  // 1. Pass the request in it, like so:
-  //    const myNewResponse = NextResponse.next({ request })
-  // 2. Copy over the cookies, like so:
-  //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-  // 3. Change the myNewResponse object to fit your needs, but avoid changing
-  //    the cookies!
-  // 4. Finally:
-  //    return myNewResponse
-  // If this is not done, you may be causing the browser and server to go out
-  // of sync and terminate the user's session prematurely!
 
   return supabaseResponse;
 }

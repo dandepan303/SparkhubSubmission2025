@@ -1,4 +1,5 @@
 export type Role = 'admin' | 'user' | 'guest';
+export type RatingType = 'HIRER' | 'WORKER';
 
 export interface User {
   id: string;
@@ -7,6 +8,26 @@ export interface User {
   ratings?: null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Rating {
+  id: string;
+  value: number;
+  text?: string | null;
+  type: RatingType;
+  fromId: string;
+  toId: string;
+  jobId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateRatingRequest {
+  value: number;
+  text?: string;
+  type: RatingType;
+  toId: string;
+  jobId?: string;
 }
 
 // API ENDPOINTS

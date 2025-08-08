@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic';
 
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { SignInArgs } from '@/types';
 import { parseError } from '@/lib/util/server_util';
 import Message from '../ui/message';
 import Loading from '../ui/loading';
@@ -17,10 +16,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { config } from '@/lib/config';
 import FloatingMessage from '../ui/floating-message';
 import { useAuth } from '@/components/auth/auth-provider';
-const GoogleAuthButton = dynamic(
-  () => import('@/components/auth/google-button'),
-  { ssr: false },
-);
+const GoogleAuthButton = dynamic(() => import('@/components/auth/google-button'), { ssr: false });
 
 interface SignInParams {
   onSignIn: () => void;
@@ -29,38 +25,23 @@ interface SignInParams {
 
 export default function SignIn(params: SignInParams) {
   const router = useRouter();
-  const { signIn: signInAuth, getUser } = useAuth();
+  const { signIn: signInAuth } = useAuth();
 
-  const [status, setStatus] = useState<{ status: 'success' | 'success-page' | 'error' | 'null' | 'loading' | 'page_loading'; message: string }>({
-    status: 'null',
-    message: '',
-  });
-
-  // Check if user is signed in
-  useEffect(() => {
-    async function exec() {
-      const user = await getUser();
-
-      if (user) {
-        setStatus({ status: 'success', message: 'User already signed in' });
-      }
-    }
-    exec();
-  }, []);
+  const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading'; message: string }>({status: 'page-loading', message: ''});
 
   // Check for success -> redirect to default page
   useEffect(() => {
-  if (status.status === 'success') {
-    router.push(`/${config.app.default_route}?message=${encodeURIComponent(status.message)}`)
-  }
-}, [status.status, status.message, router])
+    if (status.status === 'success') {
+      router.push(`/${config.app.default_route}?message=${encodeURIComponent(status.message)}`);
+    }
+  }, [status.status, status.message, router]);
 
   // form fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   // sign in function
-  const signIn = async (email: string, password: string) => {
+  const handleEmailSignIn = async (email: string, password: string) => {
     setStatus({ status: 'loading', message: 'Loading...' });
 
     if (!email || !password) {
@@ -80,7 +61,7 @@ export default function SignIn(params: SignInParams) {
     } catch (error: any) {
       setStatus({ status: 'error', message: await parseError(error.message, error.code) });
     }
-  }
+  };
 
   const verifySignInArgs = (email: string, password: string) => {
     // existance check
@@ -116,7 +97,7 @@ export default function SignIn(params: SignInParams) {
       return;
     }
 
-    signIn(email, password);
+    handleEmailSignIn(email, password);
   };
 
   // gogole sign in auth callback
@@ -138,18 +119,14 @@ export default function SignIn(params: SignInParams) {
     setStatus({ status: 'success', message: 'Successfully signed in with Google' });
   }, []);
 
-  if (status.status === 'page_loading') {
+  if (status.status === 'page-loading') {
     return <Loading message={null} />;
   }
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-gray-100">
       <Card className="w-full max-w-sm bg-gray-50">
-        {params.message && (
-          <FloatingMessage color="blue">
-            {params.message}
-          </FloatingMessage>
-        )}
+        {params.message && <FloatingMessage color="blue">{params.message}</FloatingMessage>}
 
         {status.status === 'success' && (
           <Message className="m-4 mb-0" color="green">
@@ -162,7 +139,6 @@ export default function SignIn(params: SignInParams) {
             {status.message}
           </Message>
         )}
-
 
         <CardHeader>
           <CardTitle className="text-2xl">Sign In</CardTitle>
@@ -208,7 +184,11 @@ export default function SignIn(params: SignInParams) {
             </button>
           </form>
 
-          <GoogleAuthButton handleGoogleAuthCallback={handleGoogleAuthResponse} setStatus={setStatus} buttonText={'signin_with'} buttonContext={'signin'}></GoogleAuthButton>
+          <GoogleAuthButton
+            handleGoogleAuthCallback={handleGoogleAuthResponse}
+            setStatus={setStatus}
+            buttonText={'signin_with'}
+            buttonContext={'signin'}></GoogleAuthButton>
           <div className="mt-4 text-center text-sm text-gray-600">
             Don&apos;t have an account?{' '}
             <a href="/auth/sign-up" className="text-blue-600 hover:underline">

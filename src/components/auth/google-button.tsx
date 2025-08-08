@@ -45,7 +45,7 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
 
       if (window.google?.accounts?.id) {
         initAttemptedRef.current = true;
-        
+
         try {
           // Set up global callback
           window.googleAuthCallback = (response: any) => {
@@ -68,7 +68,7 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
             if (buttonContainer && typeof window.google.accounts.id.renderButton === 'function') {
               // Clear any existing content
               buttonContainer.innerHTML = '';
-              
+
               window.google.accounts.id.renderButton(buttonContainer as HTMLElement, {
                 type: 'standard',
                 shape: 'pill',
@@ -83,7 +83,6 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
               setStatus({ status: 'error', message: `There was an issue loading Google button for ${buttonContext}. Please try again later.` });
             }
           }, 100);
-
         } catch (error) {
           console.error('Error initializing Google Auth:', error);
           setStatus({ status: 'error', message: 'Failed to initialize Google authentication.' });
@@ -108,7 +107,7 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
   }, [buttonContext, buttonText, setStatus]);
 
   return (
-    <div className='flex items-center justify-center'>
+    <div className="flex items-center justify-center">
       {/* Divider */}
       <div className="w-full">
         <div className="relative my-4">
@@ -116,16 +115,12 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
             <div className="w-full border-t border-white/30" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-transparent px-2 text-gray-700 font-semibold">or</span>
+            <span className="bg-transparent px-2 font-semibold text-gray-700">or</span>
           </div>
         </div>
 
         {/* Google Sign-In Button Container */}
-        <div
-          className="g_id_signin w-full flex justify-center"
-          data-context={buttonContext}
-          style={{ minHeight: '44px' }}
-        ></div>
+        <div className="g_id_signin flex w-full justify-center" data-context={buttonContext} style={{ minHeight: '44px' }}></div>
       </div>
     </div>
   );

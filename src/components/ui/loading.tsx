@@ -1,36 +1,45 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 export default function Loading({ message }: { message: string | null }) {
   const loadingMessages = [
-    "Building connections in your neighborhood...",
-    "Finding amazing trades nearby...",
-    "Connecting neighbors through skills...",
-    "Creating community bonds...",
-    "Discovering local talent...",
-    "Strengthening neighborhood networks...",
-    "Facilitating skill exchanges...",
-    "Building a sharing economy...",
-    "Connecting like-minded neighbors...",
-    "Making communities stronger...",
-    "Enabling cashless trades...",
-    "Fostering local collaboration...",
-    "I built a better loading screen Kevin!"
+    'Building connections in your neighborhood...',
+    'Finding amazing trades nearby...',
+    'Connecting neighbors through skills...',
+    'Creating community bonds...',
+    'Discovering local talent...',
+    'Strengthening neighborhood networks...',
+    'Facilitating skill exchanges...',
+    'Building a sharing economy...',
+    'Connecting like-minded neighbors...',
+    'Making communities stronger...',
+    'Enabling cashless trades...',
+    'Fostering local collaboration...',
+    'I built a better loading screen Kevin!',
   ];
-  
+
   // Get random message immediately, not in useEffect
-  const [randomMessage, setRandomMessage] = useState<string>("Connecting neighbors through skills...")
-  
-  useEffect(() => { 
-    const interval = setInterval(() => { 
+  const [randomMessage, setRandomMessage] = useState<string>('Connecting neighbors through skills...');
+
+  // Cycle message every 2000ms
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
       const randomI = Math.floor(Math.random() * loadingMessages.length);
       setRandomMessage(loadingMessages[randomI]);
-    })
-  })
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, []);
 
   return (
-    <div className="flex h-full min-h-screen w-full flex-col items-center justify-center bg-gradient-to-br from-purple-400 via-pink-300 to-orange-300 relative overflow-hidden font-sans">
+    <div className="relative flex h-full min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-purple-400 via-pink-300 to-orange-300 font-sans">
       {/* Custom font styles */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
@@ -72,41 +81,34 @@ export default function Loading({ message }: { message: string | null }) {
 
       {/* Background Elements */}
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-300/40 via-transparent to-purple-300/40"></div>
-      <div className="absolute top-20 left-10 w-72 h-72 bg-pink-300/30 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/40 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-yellow-200/20 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute top-20 left-10 h-72 w-72 animate-pulse rounded-full bg-pink-300/30 blur-3xl"></div>
+      <div className="absolute right-10 bottom-20 h-96 w-96 animate-pulse rounded-full bg-orange-200/40 blur-3xl"></div>
+      <div className="absolute top-1/2 left-1/2 h-80 w-80 -translate-x-1/2 -translate-y-1/2 transform animate-pulse rounded-full bg-yellow-200/20 blur-3xl"></div>
 
       {/* Loading Container */}
-      <div className="bg-white/25 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 p-8 md:p-12 text-center max-w-md w-full mx-4">
-        
+      <div className="mx-4 w-full max-w-md rounded-3xl border border-white/30 bg-white/25 p-8 text-center shadow-2xl backdrop-blur-xl md:p-12">
         {/* TradeSpace Logo/Title */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight mb-2">
-            TradeSpace
-          </h1>
-          <div className="w-20 h-1 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-full mx-auto"></div>
+          <h1 className="mb-2 text-3xl font-extrabold tracking-tight text-gray-800 md:text-4xl">TradeSpace</h1>
+          <div className="mx-auto h-1 w-20 rounded-full bg-gradient-to-r from-emerald-500 to-blue-600"></div>
         </div>
 
         {/* Loading Message */}
         {message && (
           <div className="mb-6">
-            <p className="text-lg font-bold text-gray-800 mb-2">
-              {message}
-            </p>
+            <p className="mb-2 text-lg font-bold text-gray-800">{message}</p>
           </div>
         )}
 
         {/* Loading Dots Animation */}
-        <div className="flex justify-center space-x-2 mb-6">
-          <div className="w-3 h-3 bg-emerald-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-          <div className="w-3 h-3 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-          <div className="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        <div className="mb-6 flex justify-center space-x-2">
+          <div className="h-3 w-3 animate-bounce rounded-full bg-emerald-500" style={{ animationDelay: '0ms' }}></div>
+          <div className="h-3 w-3 animate-bounce rounded-full bg-blue-500" style={{ animationDelay: '150ms' }}></div>
+          <div className="h-3 w-3 animate-bounce rounded-full bg-purple-500" style={{ animationDelay: '300ms' }}></div>
         </div>
 
         {/* Encouraging Message */}
-        <p className="text-gray-700 font-semibold text-sm leading-relaxed">
-          {randomMessage}
-        </p>
+        <p className="text-sm leading-relaxed font-semibold text-gray-700">{randomMessage}</p>
       </div>
     </div>
   );
