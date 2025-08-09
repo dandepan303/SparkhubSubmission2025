@@ -7,7 +7,7 @@ import { DefaultAPIRet, ApplyJobArgs } from '@/types';
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as Partial<ApplyJobArgs>;
+    const body = (await request.json()) as ApplyJobArgs;
     const jobId = body?.jobId;
 
     if (!jobId || typeof jobId !== 'string') {
@@ -15,10 +15,9 @@ export async function POST(request: Request) {
     }
 
     const supabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const auth = request.headers.get('authorization');
+    const token = auth?.split(' ')[1];
+    const { data: authData, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
       return NextResponse.json<DefaultAPIRet>(

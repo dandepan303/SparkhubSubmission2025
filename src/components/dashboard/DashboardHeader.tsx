@@ -79,10 +79,18 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
       left-0`}>
       <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
         
-        {/* Left Section - Search */}
+        {/* Left Section - Tradespace Name (for mobile) and Search (for desktop) */}
         <div className="flex items-center space-x-4">
-          {/* Search Bar */}
-          <div className="relative hidden md:block">
+          
+          {/* Tradespace Name (only on mobile) */}
+          <div className="lg:hidden flex-1">
+            <h1 className="text-xl font-bold text-gray-800 whitespace-nowrap">
+              Trade<span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Space</span>
+            </h1>
+          </div>
+          
+          {/* Search Bar (only on desktop) */}
+          <div className="relative hidden lg:block">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
               <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -249,7 +257,7 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
       </div>
 
       {/* Mobile Search - Shown below header on mobile only */}
-      <div className="border-t border-gray-200/20 p-3 sm:p-4 md:hidden">
+      <div className="border-t border-gray-200/20 p-3 sm:p-4 lg:hidden">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

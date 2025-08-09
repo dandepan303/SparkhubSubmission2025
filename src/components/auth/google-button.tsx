@@ -79,12 +79,12 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
               });
               setStatus({ status: 'null', message: '' });
             } else {
-              console.error(`Button container not found for context: ${buttonContext}`);
+              console.log(`Button container not found for context: ${buttonContext}`);
               setStatus({ status: 'error', message: `There was an issue loading Google button for ${buttonContext}. Please try again later.` });
             }
           }, 100);
         } catch (error) {
-          console.error('Error initializing Google Auth:', error);
+          console.log('Error initializing Google Auth:', error);
           setStatus({ status: 'error', message: 'Failed to initialize Google authentication.' });
         }
       } else {

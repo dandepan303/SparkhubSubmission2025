@@ -1,6 +1,4 @@
 Dean (whatever order u wanna do them):
-	▫ add floating message to dashbaord
-
 	▫ inventory ui & jobs ui
 	/* 
 		both of these have individual cards (ie. one offering or one job)
@@ -10,10 +8,10 @@ Dean (whatever order u wanna do them):
 		idk choose a design that works
 	*/
 
-	▫ /app/profile/inventory line 35 error page
+	▫ add author name to offering component
+		▫ when click on author name take to profile page
 
 Kevin:
-	▫ get jobs
 	Functionality:
 		▫ Create job
 			▫ new job, link hirer to A

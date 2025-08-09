@@ -32,6 +32,7 @@ export const config = {
 // Middleware
 export const privateRoutes: Record<string, Role> = {
   '/developer': 'admin',
+  '/dashboard': 'user',
 };
 
 export const publicUserData = {

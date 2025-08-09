@@ -11,8 +11,8 @@ import {
 } from 'react-icons/ai';
 
 interface SidebarProps {
-  isOpen?: boolean;
-  onToggle?: () => void;
+  isOpen: boolean; // Now a required prop, not optional
+  onToggle: () => void; // Now a required prop, not optional
   user?: {
     name: string;
     email: string;
@@ -20,7 +20,7 @@ interface SidebarProps {
   };
 }
 
-export default function Sidebar({ isOpen = true, onToggle, user }: SidebarProps) {
+export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -48,7 +48,7 @@ export default function Sidebar({ isOpen = true, onToggle, user }: SidebarProps)
       id: 'settings',
       label: 'Settings',
       icon: AiOutlineSetting,
-      path: '/settings',
+      path: '/profile/settings',
     }
   ];
 
@@ -201,7 +201,7 @@ export default function Sidebar({ isOpen = true, onToggle, user }: SidebarProps)
               const IconComponent = item.icon;
               
               return (
-                <li key={item.id} className="flex-1">
+                <li key={item.id} className="flex-1 relative"> {/* Add 'relative' to the list item */}
                   <button
                     onClick={() => handleNavigation(item.path)}
                     className={`w-full flex flex-col items-center justify-center py-2 px-1 transition-all duration-200 touch-manipulation
@@ -222,12 +222,12 @@ export default function Sidebar({ isOpen = true, onToggle, user }: SidebarProps)
                       ${isActive ? 'text-blue-600' : 'text-gray-500'}`}>
                       {item.label}
                     </span>
-
-                    {/* Active Indicator */}
-                    {isActive && (
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 w-8 bg-blue-600 rounded-t-full" />
-                    )}
                   </button>
+
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 w-8 bg-blue-600 rounded-t-full" />
+                  )}
                 </li>
               );
             })}

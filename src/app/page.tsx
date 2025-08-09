@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
-import Loading from '@/components/ui/loading'; // Import the Loading component
+import Loading from '@/components/ui/loading';
 import FloatingMessage from '@/components/ui/floating-message';
 
 export default function TradeSpaceLanding() {
@@ -14,7 +14,7 @@ export default function TradeSpaceLanding() {
   const [selectedTrade, setSelectedTrade] = useState('Fresh vegetables from garden');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSignInPressed, setIsSignInPressed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Renamed state to avoid conflict with `isPageLoading`
+  const [isLoading, setIsLoading] = useState(true);
 
   const router = useRouter();
   const { user } = useAuth();
@@ -29,9 +29,6 @@ export default function TradeSpaceLanding() {
   ];
 
   useEffect(() => {
-    // This useEffect is now solely responsible for setting the loading state
-    // after the initial render, ensuring the component doesn't show loading
-    // on subsequent renders or after the auth check is complete.
     setIsLoading(false);
   }, []);
 
@@ -58,7 +55,7 @@ export default function TradeSpaceLanding() {
     setTimeout(() => {
       setIsSignInPressed(false);
       router.push('/auth/sign-in');
-    }, 200); // Duration of the animation
+    }, 200);
   };
 
   const handleSignUp = () => {
@@ -72,15 +69,14 @@ export default function TradeSpaceLanding() {
   const rotateX = mousePosition.y * -15;
   const rotateY = mousePosition.x * 15;
 
-  // Conditional rendering: show the Loading component until the component has finished its initial render
   if (isLoading) {
     return <Loading message={null} />;
   }
 
-  // Render the full landing page content
   return (
     <div className="min-h-screen overflow-hidden bg-white">
-      {message && message.trim() !== '' && <FloatingMessage>{message}</FloatingMessage>}
+      {/* 💡 FIX: Added `mt-20` for spacing and `z-[60]` for layering */}
+      {message && message.trim() !== '' && <FloatingMessage className="mt-20 z-[60]">{message}</FloatingMessage>}
 
       {/* Fixed Header */}
       <header className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b border-gray-200/20 bg-white/95 px-6 py-4 shadow-sm backdrop-blur-md md:px-12 md:py-6">

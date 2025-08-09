@@ -182,7 +182,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/kevinboriboonsomsin/GitHub/SparkhubSubmission2025/src/lib/prisma/generated",
+      "value": "/workspaces/SparkhubSubmission2025/src/lib/prisma/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -191,17 +191,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "debian-openssl-1.1.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/kevinboriboonsomsin/GitHub/SparkhubSubmission2025/prisma/schema.prisma",
+    "sourceFilePath": "/workspaces/SparkhubSubmission2025/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../../.env",
-    "schemaEnvPath": "../../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../../prisma",
   "clientVersion": "6.13.0",
@@ -210,7 +209,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -259,8 +258,8 @@ exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-path.join(process.cwd(), "src/lib/prisma/generated/libquery_engine-darwin-arm64.dylib.node")
+path.join(__dirname, "libquery_engine-debian-openssl-1.1.x.so.node");
+path.join(process.cwd(), "src/lib/prisma/generated/libquery_engine-debian-openssl-1.1.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/lib/prisma/generated/schema.prisma")

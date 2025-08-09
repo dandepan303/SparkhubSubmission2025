@@ -112,6 +112,12 @@ export type OfferingDeleteArgs = {
   offeringId: string;
 };
 
+export type JobGetRet = {
+  status: 'success' | 'error';
+  message: string;
+  jobs?: Job[];
+}
+
 export type JobCreateArgs = {
   title: string;
   description: string;
@@ -127,17 +133,7 @@ export type GetJobApplicantsRet = {
     email: string;
     name: string;
     contactInfo: string | null;
-    ratingTo: {
-      id: string;
-      value: number;
-      text: string | null;
-      type: string;
-      fromId: string;
-      toId: string;
-      jobId: string | null;
-      createdAt: string;
-      updatedAt: string;
-    }[];
+    ratingTo: Rating[];
   }[];
 };
 

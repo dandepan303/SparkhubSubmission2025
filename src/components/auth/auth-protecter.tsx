@@ -29,7 +29,7 @@ export default function AuthProtecter({ children, className }: AuthProtecterProp
       const requiredRole = Object.entries(privateRoutes).find(([route]) => pathname.startsWith(route))?.[1] || 'guest';
   
       if (requiredRole && !isAuthorized(userRole, requiredRole)) {
-        router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
+        // router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
         return;
       }
   

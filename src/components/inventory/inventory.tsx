@@ -39,7 +39,7 @@ export default function Inventory({ userId }: { userId: string }) {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60); // 60 second timeout
 
-      const { data: { user } }: { data: { user: User} } = await axios.get(`/api/profile/${userId}`, {
+      const { data: { user } }: { data: { user: User} } = await axios.get(`/api/profile/?id=${userId}`, {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
@@ -66,14 +66,14 @@ export default function Inventory({ userId }: { userId: string }) {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60);
 
-      const res = await axios.post('/api/profile/offering', offeringData, {
+      const {data: res}: {data: OfferingGetRet} = await axios.post('/api/profile/offering', offeringData, {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
 
-      if (res.data.status === 'error') {
+      if (res.status === 'error') {
         setStatus({ status: 'error', message: 'There was an issue saving your changes' });
       } else {
         setStatus({ status: 'success', message: 'Successfully saved your changes' });

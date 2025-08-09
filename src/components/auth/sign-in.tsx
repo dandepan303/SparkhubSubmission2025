@@ -25,15 +25,15 @@ export default function SignIn(params: SignInParams) {
   const { loading, signIn: signInAuth, user } = useAuth();
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading'; message: string }>({
+  const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading' | 'message'; message: string }>({
     status: 'page-loading',
     message: '',
   });
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && params.message !== 'You do% not% have access to this') {
       const newMessage = params.message || 'Already+signed+in'
-      router.push(`${config.app.default_route}?message=${newMessage}`);
+      setStatus({status: 'message', message: newMessage});
     }
   }, [loading, user]);
 

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import AuthProtecter from "@/components/auth/auth-protecter";
+import AnimatePresenceWrapper from "@/components/ui/AnimatePresenceWrapper";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -26,12 +27,14 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            {/* Add a background class to the body element */}
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
                 <AuthProvider>
                     <AuthProtecter>
                         <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-                        {children}
+                        <AnimatePresenceWrapper>
+                            {children}
+                        </AnimatePresenceWrapper>
                     </AuthProtecter>
                 </AuthProvider>
             </body>

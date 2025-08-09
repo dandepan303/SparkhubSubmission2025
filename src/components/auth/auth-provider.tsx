@@ -44,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchProfile = useCallback(async (currSession: Session | null) => {
     try {
-      const res = await axios.get(`/api/profile/${currSession.user.id}`, {
+      const res = await axios.get(`/api/profile/?id=${currSession.user.id}`, {
         validateStatus: () => true,
         withCredentials: true,
         headers: { Authorization: `Bearer ${currSession?.access_token}` },
@@ -58,6 +58,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Error fetching profile:', error);
       setProfile(null);
     }
+    setLoading(false);
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -148,8 +149,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser(session?.user ?? null);
         if (session?.user) {
           await fetchProfile(session);
+        } else {
+          setLoading(false);
         }
-        setLoading(false);
         setVersion(v => v + 1); // Increment version on initial session
         clearTimeout(timeout);
       })
