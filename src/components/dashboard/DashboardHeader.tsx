@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth/auth-provider';
 
 interface HeaderProps {
   sidebarOpen?: boolean;
@@ -14,9 +15,9 @@ interface HeaderProps {
 
 export default function Header({ sidebarOpen = true, onSidebarToggle, user }: HeaderProps) {
   const router = useRouter();
+  const { signOut } = useAuth();
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
-  const [notifications] = useState(3); // Mock notification count
   const [messages] = useState(2); // Mock message count
   
   const profileRef = useRef<HTMLDivElement>(null);
@@ -36,6 +37,17 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      setProfileDropdownOpen(false);
+    }
+  };
 
   const mockMessages = [
     {
@@ -62,23 +74,13 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
   ];
 
   return (
-    <header className={`fixed top-0 right-0 z-40 transition-all duration-300 ${
-      sidebarOpen ? 'left-64' : 'left-16'
-    } bg-white/95 backdrop-blur-md border-b border-gray-200/20 shadow-sm`}>
-      <div className="flex items-center justify-between px-6 py-4">
+    <header className={`fixed top-0 right-0 z-40 transition-all duration-300 bg-white/95 backdrop-blur-md border-b border-gray-200/20 shadow-sm
+      ${sidebarOpen ? 'lg:left-64' : 'lg:left-16'}
+      left-0`}>
+      <div className="flex items-center justify-between px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
         
-        {/* Left Section - Mobile Menu + Search */}
+        {/* Left Section - Search */}
         <div className="flex items-center space-x-4">
-          {/* Mobile Sidebar Toggle */}
-          <button
-            onClick={onSidebarToggle}
-            className="flex lg:hidden h-8 w-8 items-center justify-center rounded-lg bg-gray-100/80 text-gray-600 transition-all duration-200 hover:bg-gray-200/80 hover:text-gray-800"
-          >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-
           {/* Search Bar */}
           <div className="relative hidden md:block">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -89,13 +91,13 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
             <input
               type="text"
               placeholder="Search skills and services..."
-              className="w-80 rounded-full border border-gray-200 bg-gray-50/80 pl-10 pr-4 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="w-48 lg:w-64 xl:w-80 rounded-full border border-gray-200 bg-gray-50/80 pl-10 pr-4 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
         </div>
 
         {/* Right Section - Actions */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           
           {/* Inbox Button */}
           <div className="relative" ref={inboxRef}>
@@ -156,23 +158,11 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
             )}
           </div>
 
-          {/* Notifications Button */}
-          <button className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100/80 text-gray-600 transition-all duration-200 hover:bg-gradient-to-r hover:from-green-500 hover:to-teal-600 hover:text-white hover:shadow-lg hover:scale-105">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            {notifications > 0 && (
-              <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 to-rose-600 text-xs font-bold text-white">
-                {notifications}
-              </div>
-            )}
-          </button>
-
           {/* Profile Dropdown */}
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-              className="flex items-center space-x-3 rounded-full bg-gray-100/80 p-1 pr-3 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:shadow-lg hover:scale-105 group"
+              className="flex items-center space-x-2 sm:space-x-3 rounded-full bg-gray-100/80 p-1 pr-2 sm:pr-3 transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:shadow-lg hover:scale-105 group"
             >
               {/* Avatar */}
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-bold text-white shadow-md">
@@ -183,8 +173,8 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
                 )}
               </div>
               
-              {/* Name - Hidden on mobile */}
-              <span className="hidden md:block text-sm font-semibold text-gray-700 group-hover:text-white transition-colors">
+              {/* Name - Hidden on small screens, shown on medium+ */}
+              <span className="hidden lg:block text-sm font-semibold text-gray-700 group-hover:text-white transition-colors">
                 {user?.name || 'User'}
               </span>
               
@@ -245,10 +235,7 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
 
                 <div className="border-t border-gray-200/50 p-2">
                   <button
-                    onClick={() => {
-                      // Handle sign out
-                      setProfileDropdownOpen(false);
-                    }}
+                    onClick={handleSignOut}
                     className="flex w-full items-center space-x-3 rounded-lg p-3 text-left transition-colors hover:bg-red-50/80"
                   >
                     <span className="text-lg">🚪</span>
@@ -261,8 +248,8 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
         </div>
       </div>
 
-      {/* Mobile Search - Shown below header on mobile */}
-      <div className="border-t border-gray-200/20 p-4 md:hidden">
+      {/* Mobile Search - Shown below header on mobile only */}
+      <div className="border-t border-gray-200/20 p-3 sm:p-4 md:hidden">
         <div className="relative">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3">
             <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

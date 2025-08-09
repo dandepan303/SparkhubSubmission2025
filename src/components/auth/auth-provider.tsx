@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase/client';
 import { User as AppUser } from '@/types';
 import axios from 'axios';
 import { config } from '@/lib/config';
+import { parseError } from '@/lib/util/server_util';
 
 interface AuthContextType {
   user: User | null;
@@ -16,6 +17,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<AppUser>) => Promise<void>;
+  getUser: () => Promise<User | null>;
   version: number;
 }
 
@@ -111,6 +113,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const getUser = async () => {
+    try {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      if (error) {
+        console.log('/components/auth-provider get_user error');
+
+        parseError(error.message, error.code);
+        return null;
+      }
+      return user;
+    } catch (error) {
+      console.error('/components/auth-provider get_user error');
+      parseError(error.message, error.code);
+      return null;
+    }
+  };
+
   useEffect(() => {
     // Add a timeout to prevent infinite loading
     const timeout = setTimeout(() => {
@@ -168,6 +190,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signUp,
     signOut,
     updateProfile,
+    getUser,
     version,
   };
 

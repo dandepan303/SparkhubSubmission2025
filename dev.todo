@@ -1,27 +1,68 @@
 Dean (whatever order u wanna do them):
-	▫ Onboarding page (sorta done ig) @started(25-08-08 10:55)
-	✔ Finish sign in page @done(25-08-08 09:56)
-	✔ Make components/ui/message & components/ui/floating-message look better @done(25-08-08 09:58) holy fuck this took way to long
-	✔ Loading status to sign up form @done(25-08-08 09:57)
-	Inventory Component:
-		▫ Make look better
-		▫ Create offering button + create offering form -> calls createOffering
-	Offering Component:
-		▫ Make look better
-		▫ if {isOwner} -> option to edit values
-			▫ buttons for editing use onDelete and onUpdate
+	▫ add floating message to dashbaord
+
+	▫ inventory ui & jobs ui
+	/* 
+		both of these have individual cards (ie. one offering or one job)
+		both need to be able to be editted (isOwner) - use onUpdate and onDelete for offering
+		both need to be in list format
+		both need a button for create (create offering -> createOffering() or create job -> router.push('/create-job'))
+		idk choose a design that works
+	*/
+
 	▫ /app/profile/inventory line 35 error page
 
 Kevin:
-	Inventory Backend:
-		✔ Create offering api endpoint @started(25-08-08 12:03) @done(25-08-08 12:03) @lasted(30s)
-		✔ Get user X data @started(25-08-08 12:10) @done(25-08-08 12:10) @lasted(18s)
-		✔ Edit offering @started(25-08-08 12:11) @done(25-08-08 12:11) @lasted(15s)
-		✔ Write middleend functions @started(25-08-08 15:19) @done(25-08-08 15:19) @lasted(5s)
-			▫ Create offering
-			▫ Edit offering
-			▫ Get offerings into an easy format
-		▫ Test middleend functions
+	▫ get jobs
+	Functionality:
+		▫ Create job
+			▫ new job, link hirer to A
+		▫ Apply job
+			▫ new job application
+			▫ add B to applications
+		▫ Accept job
+			▫ set worker to B
+		▫ Complete job
+			▫ A set status COMPLETED
+	Endpoints:
+		▫ /create
+			▫ params: user (cookies), job data
+			▫ checks if user is signed in
+			▫ creates job with hirer relation to user
+		▫ /apply
+			▫ params: job id, user (cookies)
+			▫ checks if user is signed in
+			▫ connects user.jobApplications to job.applications
+		▫ /accept
+			▫ params: job id, worker id, user (cookies)
+			▫ checks if user is signed in
+			▫ checks if job is user's
+			▫ check if job is searching
+			▫ checks if worker id is in job's applications
+			▫ deletes all job.applications
+			▫ sets job.status to in progress
+			▫ sets job.worker to worker
+			▫ add notification to worker
+		▫ /complete
+			▫ params: job id, user (cookies)
+			▫ checks if user is signed in
+			▫ checks if job is user's
+			▫ sets job.status to complete
+			▫ add notification to worker
+		▫ /spend
+			▫ params: offering id, spending data, user (cookies)
+			▫ checks if user is signed in
+			▫ checks if offering's_owner.jobsCreated has worker_id = user.id && status = completed -> job
+			▫ check if job.payment >= offering.cost
+			▫ if job quantity != null -> reduce quantity of offering
+			▫ reduce jobCreated payment
+			▫ send notification to offering owner
+		▫ /rate
+			▫ params: job id, rating data, user (cookies)
+			▫ checks if user is signed in
+			▫ if user is worker -> rating: rating.ratingType = hirer
+			▫ if user is hirer -> rating: rating.ratingType = worker
+
 
 Finish (both):
 	▫ middleware private routes

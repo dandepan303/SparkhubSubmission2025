@@ -26,6 +26,7 @@ export async function POST(request: Request) {
           id: userId,
           email: email,
           name: name,
+          role: 'user'
         },
       });
     } catch (err: any) {

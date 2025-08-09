@@ -1,13 +1,26 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { 
+  AiOutlineHome, 
+  AiOutlineFileText, 
+  AiOutlineSearch, 
+  AiOutlineSetting,
+  AiOutlineLeft,
+  AiOutlineRight
+} from 'react-icons/ai';
 
 interface SidebarProps {
   isOpen?: boolean;
   onToggle?: () => void;
+  user?: {
+    name: string;
+    email: string;
+    avatar?: string;
+  };
 }
 
-export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
+export default function Sidebar({ isOpen = true, onToggle, user }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -16,31 +29,38 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
     {
       id: 'home',
       label: 'Home',
-      icon: '🏠',
+      icon: AiOutlineHome,
       path: '/dashboard',
     },
     {
       id: 'offers',
       label: 'My Offers',
-      icon: '📝',
-      path: '/offers',
+      icon: AiOutlineFileText,
+      path: '/profile/inventory',
     },
     {
       id: 'requests',
       label: 'My Requests',
-      icon: '🔍',
+      icon: AiOutlineSearch,
       path: '/requests',
     },
     {
       id: 'settings',
       label: 'Settings',
-      icon: '⚙️',
+      icon: AiOutlineSetting,
       path: '/settings',
     }
   ];
 
   const handleNavigation = (path: string) => {
     router.push(path);
+  };
+
+  const getUserInitial = () => {
+    if (user?.name) {
+      return user.name.charAt(0).toUpperCase();
+    }
+    return 'U';
   };
 
   return (
@@ -71,9 +91,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                   className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors flex-shrink-0 ml-2"
                   aria-label="Close sidebar"
                 >
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  <AiOutlineLeft className="h-4 w-4" />
                 </button>
               </>
             ) : (
@@ -82,9 +100,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                 className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
                 aria-label="Open sidebar"
               >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <AiOutlineRight className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -94,6 +110,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
             <ul className="space-y-1">
               {menuItems.map((item) => {
                 const isActive = pathname === item.path;
+                const IconComponent = item.icon;
                 
                 return (
                   <li key={item.id}>
@@ -114,7 +131,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                       {/* Icon */}
                       <div className={`flex items-center justify-center flex-shrink-0 
                         ${isOpen ? 'mr-3' : ''}`}>
-                        <span className="text-lg select-none">{item.icon}</span>
+                        <IconComponent className="h-5 w-5" />
                       </div>
 
                       {/* Label - only show when expanded */}
@@ -147,15 +164,27 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
           <div className="border-t border-gray-200 p-4 flex-shrink-0">
             <div className={`flex items-center ${isOpen ? 'space-x-3' : 'justify-center'}`}>
               {/* Avatar */}
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white font-bold shadow-sm flex-shrink-0">
-                U
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-sm flex-shrink-0">
+                {user?.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.name || 'User'} 
+                    className="h-10 w-10 rounded-full object-cover" 
+                  />
+                ) : (
+                  <span>{getUserInitial()}</span>
+                )}
               </div>
               
               {/* User Info - only show when expanded */}
               {isOpen && (
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900 truncate">User Name</p>
-                  <p className="text-xs text-gray-500 truncate">user@example.com</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user?.name || 'User Name'}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user?.email || 'user@example.com'}
+                  </p>
                 </div>
               )}
             </div>
@@ -169,6 +198,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
           <ul className="flex items-center justify-around">
             {menuItems.map((item) => {
               const isActive = pathname === item.path;
+              const IconComponent = item.icon;
               
               return (
                 <li key={item.id} className="flex-1">
@@ -184,7 +214,7 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                     {/* Icon */}
                     <div className={`flex items-center justify-center mb-1 transition-transform duration-200
                       ${isActive ? 'scale-110' : ''}`}>
-                      <span className="text-xl select-none">{item.icon}</span>
+                      <IconComponent className="h-6 w-6" />
                     </div>
 
                     {/* Label */}
@@ -207,12 +237,24 @@ export default function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
         {/* Mobile User Profile - Overlay */}
         <div className="absolute -top-16 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 hidden" id="mobile-user-menu">
           <div className="flex items-center space-x-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-sm flex-shrink-0">
-              U
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-sm flex-shrink-0">
+              {user?.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name || 'User'} 
+                  className="h-8 w-8 rounded-full object-cover" 
+                />
+              ) : (
+                <span>{getUserInitial()}</span>
+              )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-gray-900 truncate">User Name</p>
-              <p className="text-xs text-gray-500 truncate">user@example.com</p>
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.name || 'User Name'}
+              </p>
+              <p className="text-xs text-gray-500 truncate">
+                {user?.email || 'user@example.com'}
+              </p>
             </div>
           </div>
         </div>

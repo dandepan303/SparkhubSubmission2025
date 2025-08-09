@@ -1,20 +1,6 @@
 MVP:
 	✔ User authentication flow @started(25-08-07 19:51) @done(25-08-07 19:51) @lasted(41s)
-	▫ Hirer inventory
-	▫ Create job
-		▫ new job, link hirer to A
-	▫ Apply job
-		▫ new job application
-		▫ add B to applications
-	▫ Accept job
-		▫ set worker to B
-	▫ Complete job
-		▫ A set status COMPLETED
-	
-
-	▫ Hirer creates job posting
-	▫ Worker signs up for job posting
-	▫ Hirer and worker rate
+	▫ Job logic
 	
 Idea:
 	UI/UX:

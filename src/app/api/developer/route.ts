@@ -24,27 +24,34 @@ export async function DELETE(request: Request) {
     const token = auth?.split(' ')[1];
     const { data: userData, error: authError } = await supabase.auth.getUser(token);
 
-    if (!userData?.user) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Please sign in to access this' }, { status: 401 });
-    if (authError)
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(authError.message, authError.code) }, { status: 401 });
+    // if (!userData?.user) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Please sign in to access this' }, { status: 401 });
+    // if (authError) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(authError.message, authError.code) }, { status: 401 });
 
-    // Require developer role
-    const userRole = (userData.user.user_metadata as any)?.role || (userData.user.app_metadata as any)?.role;
-    if (!isAuthorized(userRole, 'developer')) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You do not have access to this' }, { status: 403 });
-    }
-
-    const userIdToDelete = targetUserId || userData.user.id;
+    // // Require developer role
+    // const userRole = (userData.user.user_metadata as any)?.role || (userData.user.app_metadata as any)?.role;
+    // if (!isAuthorized(userRole, 'developer')) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You do not have access to this' }, { status: 403 });
 
     // Delete auth users
     if (deleteAuth) {
       const admin = createAdminSupabaseClient();
-      const { error: deleteAuthError } = await admin.auth.admin.deleteUser(userIdToDelete);
-      if (deleteAuthError)
+      // Get all users
+      const { data: users, error: listError } = await admin.auth.admin.listUsers();
+      if (listError)
+      return NextResponse.json<DefaultAPIRet>(
+        { status: 'error', message: await parseError(listError.message, (listError as any).code) },
+        { status: 400 },
+      );
+
+      if (users?.users && users.users.length > 0) {
+      for (const user of users.users) {
+        const { error: deleteAuthError } = await admin.auth.admin.deleteUser(user.id);
+        if (deleteAuthError)
         return NextResponse.json<DefaultAPIRet>(
           { status: 'error', message: await parseError(deleteAuthError.message, (deleteAuthError as any).code) },
           { status: 400 },
         );
+      }
+      }
     }
 
     // Delete db users and related data with Prisma, then seed developer users
@@ -53,7 +60,6 @@ export async function DELETE(request: Request) {
       await prisma.$transaction([
         prisma.offering.deleteMany({}),
         prisma.rating.deleteMany({}),
-        prisma.jobApplication.deleteMany({}),
         prisma.job.deleteMany({}),
         prisma.user.deleteMany({}),
       ]);
@@ -69,12 +75,7 @@ export async function DELETE(request: Request) {
       for (const email of devEmails) {
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email: email,
-          password: process.env.DEVELOPER_ADMIN_PASSWORD!,
-          options: {
-            data: {
-              role: 'admin',
-            },
-          },
+          password: process.env.DEVELOPER_ADMIN_PASSWORD!
         });
 
         if (signUpError || !signUpData?.user) {
@@ -93,8 +94,8 @@ export async function DELETE(request: Request) {
         devUsers.map(dev =>
           prisma.user.upsert({
             where: { id: dev.id },
-            update: { email: dev.email, name: dev.name },
-            create: { id: dev.id, email: dev.email, name: dev.name },
+            update: { email: dev.email, name: dev.name, role: 'admin' },
+            create: { id: dev.id, email: dev.email, name: dev.name, role: 'admin' },
           }),
         ),
       );

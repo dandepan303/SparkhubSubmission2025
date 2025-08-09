@@ -14,28 +14,31 @@ interface AuthProtecterProps {
 }
 
 export default function AuthProtecter({ children, className }: AuthProtecterProps) {
-  const [status, setStatus] = useState<{ loading: boolean }>({ loading: true });
+  const [blockAccess, setBlockAccess] = useState<Boolean>(true);
 
-  const { user, loading } = useAuth();
+  const { profile, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     if (loading) return;
 
-    const userRole = (user ? user.role || 'guest' : 'guest') as Role;
-
-    const requiredRole = Object.entries(privateRoutes).find(([route]) => pathname.startsWith(route))?.[1];
-
-    if (requiredRole && !isAuthorized(userRole, requiredRole)) {
-      router.push('/auth/sign-in');
-      return;
+    async function exec() {
+      const userRole = (profile ? profile.role : 'guest') as Role;
+  
+      const requiredRole = Object.entries(privateRoutes).find(([route]) => pathname.startsWith(route))?.[1] || 'guest';
+  
+      if (requiredRole && !isAuthorized(userRole, requiredRole)) {
+        router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
+        return;
+      }
+  
+      setBlockAccess(false);
     }
+    exec();
+  }, [loading, profile, pathname, router]);
 
-    setStatus({ loading: false });
-  }, [user, loading, pathname, router]);
-
-  if (loading) {
+  if (blockAccess) {
     return <Loading message={null} />;
   }
 

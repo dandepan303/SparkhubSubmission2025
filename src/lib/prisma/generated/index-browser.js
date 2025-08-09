@@ -126,7 +126,10 @@ exports.Prisma.UserScalarFieldEnum = {
   name: 'name',
   contactInfo: 'contactInfo',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  newNotifications: 'newNotifications',
+  notifications: 'notifications',
+  role: 'role'
 };
 
 exports.Prisma.JobScalarFieldEnum = {
@@ -139,14 +142,7 @@ exports.Prisma.JobScalarFieldEnum = {
   workerId: 'workerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  completedAt: 'completedAt'
-};
-
-exports.Prisma.JobApplicationScalarFieldEnum = {
-  id: 'id',
-  jobId: 'jobId',
-  userId: 'userId',
-  appliedAt: 'appliedAt'
+  payment: 'payment'
 };
 
 exports.Prisma.RatingScalarFieldEnum = {
@@ -166,16 +162,9 @@ exports.Prisma.OfferingScalarFieldEnum = {
   description: 'description',
   cost: 'cost',
   quantity: 'quantity',
-  inventoryId: 'inventoryId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.InventoriesScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {
@@ -206,10 +195,8 @@ exports.RatingType = exports.$Enums.RatingType = {
 exports.Prisma.ModelName = {
   User: 'User',
   Job: 'Job',
-  JobApplication: 'JobApplication',
   Rating: 'Rating',
-  Offering: 'Offering',
-  inventories: 'inventories'
+  Offering: 'Offering'
 };
 
 /**

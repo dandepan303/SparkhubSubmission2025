@@ -50,12 +50,13 @@ export async function POST(request: Request) {
 
     // DB sign up
     try {
-      const db_data = await prisma.user.upsert({
+      await prisma.user.upsert({
         where: { id: auth_data.user.id },
         create: {
           id: auth_data.user.id,
           email: email,
           name: name,
+          role: 'user'
         },
         update: {
           name: name,

@@ -6,12 +6,19 @@ export type JobStatus = 'SEARCHING' | 'IN_PROGRESS' | 'COMPLETED';
 
 export interface User {
   id: string;
+  role: string;
   email: string;
   name: string;
   contactInfo: string | null;
   createdAt: Date;
   updatedAt: Date;
-  offerings?: Offering[]; // optional relation mirror
+  newNotifications: boolean;
+  notifications: string[];
+  jobsCreated?: Job[];
+  jobsWorking?: Job[];
+  offerings?: Offering[];
+  ratingFrom?: Rating[];
+  ratingTo?: Rating[];
 }
 
 export interface Rating {
@@ -21,16 +28,12 @@ export interface Rating {
   type: RatingType;
   fromId: string;
   toId: string;
-  jobId: string | null;
+  jobId: string;
   createdAt: Date;
   updatedAt: Date;
-}
-
-export interface JobApplication {
-  id: string;
-  jobId: string;
-  userId: string;
-  appliedAt: Date;
+  from?: User;
+  to?: User;
+  job?: Job;
 }
 
 export interface Job {
@@ -43,7 +46,10 @@ export interface Job {
   workerId: string | null;
   createdAt: Date;
   updatedAt: Date;
-  completedAt: Date | null;
+  payment: number;
+  hirer?: User;
+  worker?: User;
+  ratings?: Rating[];
 }
 
 export interface Offering {
@@ -51,9 +57,9 @@ export interface Offering {
   description: string;
   cost: number;
   quantity: number | null;
-  userId: string;
   createdAt: Date;
   updatedAt: Date;
+  userId: string;
   owner?: User;
 }
 
@@ -104,4 +110,63 @@ export type OfferingPostArgs = {
 
 export type OfferingDeleteArgs = {
   offeringId: string;
+};
+
+export type JobCreateArgs = {
+  title: string;
+  description: string;
+  location: string;
+  payment: number;
+};
+
+export type GetJobApplicantsRet = {
+  status: 'success' | 'error';
+  message: string;
+  applicants?: {
+    id: string;
+    email: string;
+    name: string;
+    contactInfo: string | null;
+    ratingTo: {
+      id: string;
+      value: number;
+      text: string | null;
+      type: string;
+      fromId: string;
+      toId: string;
+      jobId: string | null;
+      createdAt: string;
+      updatedAt: string;
+    }[];
+  }[];
+};
+
+export type ApplyJobArgs = {
+  jobId: string;
+};
+
+export type AcceptJobArgs = {
+  jobId: string;
+  workerId: string;
+};
+
+export type RateJobArgs = {
+  jobId: string;
+  value: number;
+  text?: string;
+};
+
+export type RateJobRet = {
+  status: 'success' | 'error';
+  message: string;
+  rating?: Rating;
+};
+
+export type SpendArgs = {
+  offeringId: string;
+  quantity?: number;
+};
+
+export type CompleteJobArgs = {
+  jobId: string;
 };

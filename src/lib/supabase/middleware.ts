@@ -35,16 +35,27 @@ export async function updateSession(request: NextRequest) {
   // START OF CODE YOU CAN EDIT
 
   const pathname = request.nextUrl.pathname;
+  const method = request.method.toUpperCase();
+
+  // Allow CORS preflight requests to pass through untouched
+  if (method === 'OPTIONS') {
+    return supabaseResponse;
+  }
 
   // loop over all protected routes
   for (const [route, requiredRole] of Object.entries(privateRoutes)) {
     // if requested reoute is protected, then check authorization
     if (pathname.startsWith(route)) {
       if (!user) {
+        // For API routes, return 401 JSON instead of redirecting (avoids XHR "Network Error" on preflight)
+        if (pathname.startsWith('/api')) {
+          return NextResponse.json({ status: 'error', message: 'Unauthorized' }, { status: 401 });
+        }
         const url = request.nextUrl.clone();
-        url.pathname = '/auth/signin';
+        url.pathname = '/auth/sign-in';
         return NextResponse.redirect(url);
       } else {
+        console.log('middle ware', user?.role, requiredRole); // TODO: REMOVE
         if (!isAuthorized(user?.role, requiredRole)) {
           const url = request.nextUrl.clone();
           url.pathname = '/';

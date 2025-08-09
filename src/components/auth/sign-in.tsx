@@ -17,19 +17,25 @@ import { useAuth } from '@/components/auth/auth-provider';
 const GoogleAuthButton = dynamic(() => import('@/components/auth/google-button'), { ssr: false });
 
 interface SignInParams {
-  onSignIn: () => void;
   message?: string;
 }
 
 export default function SignIn(params: SignInParams) {
   const router = useRouter();
-  const { signIn: signInAuth, user } = useAuth();
+  const { loading, signIn: signInAuth, user } = useAuth();
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading'; message: string }>({
     status: 'page-loading',
     message: '',
   });
+
+  useEffect(() => {
+    if (!loading && user) {
+      const newMessage = params.message || 'Already+signed+in'
+      router.push(`${config.app.default_route}?message=${newMessage}`);
+    }
+  }, [loading, user]);
 
   // Mouse tracking effect
   useEffect(() => {
@@ -58,7 +64,7 @@ export default function SignIn(params: SignInParams) {
   // Check for success -> redirect to default page
   useEffect(() => {
     if (status.status === 'success') {
-      router.push(`/${config.app.default_route}?message=${encodeURIComponent(status.message)}`);
+      router.push(`/dashboard?message=${encodeURIComponent(status.message)}`);
     }
   }, [status.status, status.message, router]);
 

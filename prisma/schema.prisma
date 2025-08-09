@@ -10,21 +10,21 @@ datasource db {
 }
 
 model User {
-  id              String   @id
-  email           String   @unique
-  name            String
-  contactInfo     String?
-
-  jobApplications Job[]    @relation("JobApplications")
-
-  jobsCreated     Job[]    @relation("JobHirer")
-  jobsWorking     Job[]    @relation("JobWorker")
-
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  ratingFrom      Rating[]
-  ratingTo        Rating[]
+  id               String     @id
+  email            String     @unique
+  name             String
+  contactInfo      String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  newNotifications Boolean    @default(false)
+  notifications    String[]   @default([])
+  role             String
+  jobsCreated      Job[]      @relation("JobHirer")
+  jobsWorking      Job[]      @relation("JobWorker")
+  offerings        Offering[] @relation("Offerings")
+  ratingFrom       Rating[]   @relation("RatingFrom")
+  ratingTo         Rating[]   @relation("RatingTo")
+  applications     Job[]      @relation("JobApplications")
 
   @@map("users")
 }
@@ -35,16 +35,15 @@ model Job {
   description  String
   location     String
   status       JobStatus @default(SEARCHING)
-
   hirerId      String
   workerId     String?
-  hirer        User      @relation("JobHirer", fields: [hirerId], references: [id], onDelete: Cascade)
-  worker       User?     @relation("JobWorker", fields: [workerId], references: [id])
-
-  applications User[]    @relation("JobApplications")
-
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  payment      Int
+  hirer        User      @relation("JobHirer", fields: [hirerId], references: [id], onDelete: Cascade)
+  worker       User?     @relation("JobWorker", fields: [workerId], references: [id])
+  ratings      Rating[]
+  applications User[]    @relation("JobApplications")
 
   @@index([status])
   @@index([location])
@@ -59,11 +58,11 @@ model Rating {
   type      RatingType
   fromId    String
   toId      String
-  jobId     String?
+  jobId     String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   from      User       @relation("RatingFrom", fields: [fromId], references: [id], onDelete: Cascade)
-  job       Job?       @relation(fields: [jobId], references: [id])
+  job       Job        @relation(fields: [jobId], references: [id])
   to        User       @relation("RatingTo", fields: [toId], references: [id], onDelete: Cascade)
 
   @@index([type])
@@ -71,14 +70,14 @@ model Rating {
 }
 
 model Offering {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   description String
   cost        Int
   quantity    Int?
-  inventoryId String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  inventories inventories @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  owner       User     @relation("Offerings", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("offerings")
 }
