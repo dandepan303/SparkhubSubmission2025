@@ -13,10 +13,10 @@ model User {
   id              String           @id
   email           String           @unique
   name            String
-  contactInfo?     String
+  contactInfo     String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  inventory       Inventory?
+  offerings Offering[] @relation("Owner")
   jobApplications JobApplication[]
   jobsCreated     Job[]            @relation("JobHirer")
   jobsWorking     Job[]            @relation("JobWorker")
@@ -78,26 +78,15 @@ model Rating {
   @@map("ratings")
 }
 
-model Inventory {
-  id        String     @id @default(cuid())
-  userId    String     @unique
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  offerings Offering[]
-
-  @@map("inventories")
-}
-
 model Offering {
   id          String    @id @default(cuid())
   description String
   cost        Int
   quantity    Int?
-  inventoryId String
+  userId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  owner       User      @relation("Owner", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("offerings")
 }

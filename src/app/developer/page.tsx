@@ -50,7 +50,7 @@ export default function DeveloperPage() {
   }
 
   return (
-    <AuthProtecter className="min-h-screen w-full flex items-center justify-center p-6">
+    <AuthProtecter className="flex min-h-screen w-full items-center justify-center p-6">
       <div className="w-full max-w-md space-y-4">
         <h1 className="text-xl font-bold">Developer Controls</h1>
 
@@ -69,24 +69,21 @@ export default function DeveloperPage() {
           <button
             className="rounded-md bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
             onClick={() => handleDeveloperDelete({ deleteAuth: true, deleteUserDb: true })}
-            disabled={status.status === 'loading'}
-          >
+            disabled={status.status === 'loading'}>
             {status.status === 'loading' ? 'Working...' : 'Delete Both (Auth + DB)'}
           </button>
 
           <button
             className="rounded-md bg-gray-700 px-4 py-2 text-white disabled:opacity-50"
             onClick={() => handleDeveloperDelete({ deleteAuth: true })}
-            disabled={status.status === 'loading'}
-          >
+            disabled={status.status === 'loading'}>
             {status.status === 'loading' ? 'Working...' : 'Delete Auth Only'}
           </button>
 
           <button
             className="rounded-md bg-gray-500 px-4 py-2 text-white disabled:opacity-50"
             onClick={() => handleDeveloperDelete({ deleteUserDb: true })}
-            disabled={status.status === 'loading'}
-          >
+            disabled={status.status === 'loading'}>
             {status.status === 'loading' ? 'Working...' : 'Delete DB Only'}
           </button>
         </div>
@@ -94,5 +91,3 @@ export default function DeveloperPage() {
     </AuthProtecter>
   );
 }
-
-

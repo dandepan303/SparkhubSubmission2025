@@ -1,7 +1,8 @@
+import { publicUserData } from '@/lib/config';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { parseError } from '@/lib/util/server_util';
 import { NextResponse } from 'next/server';
-// import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma/prisma';
 
 // get db user
 export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
@@ -12,18 +13,30 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const auth = request.headers.get('authorization');
     const token = auth?.split(' ')[1];
     const { data, error } = await supabase.auth.getUser(token);
-
-    if (!data?.user) return NextResponse.json({ status: 'error', message: 'Please sign in first' }, { status: 401 });
     if (error) return NextResponse.json({ status: 'error', message: await parseError(error.message, error.code) }, { status: 401 });
 
     // fetching db data
     const user = await prisma.user.findUnique({
       where: { id: data.user.id },
+      select: data?.user
+        ? {
+            id: true,
+            name: true,
+            contactInfo: true,
+            offerings: true,
+            jobApplications: true,
+            jobsCreated: true,
+            jobsWorking: true,
+            ratingsGiven: true,
+            ratingsReceived: true,
+            createdAt: true,
+            updatedAt: true,
+          }
+        : publicUserData,
     });
 
-    if (!user) {
-      return NextResponse.json({ user: null }, { status: 200 });
-    }
+    if (!user) return NextResponse.json({ user: null }, { status: 200 });
+
     return NextResponse.json(
       {
         user: {
@@ -35,7 +48,8 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       { status: 200 },
     );
   } catch (error: any) {
-    console.log('Route: /api/route name error', error);
+    console.log('/api/profile/[id] get error');
+    parseError(error.message, error.code);
 
     return NextResponse.json({ user: null }, { status: 200 });
   }

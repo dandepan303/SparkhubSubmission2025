@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase/client';
 import { User as AppUser } from '@/types';
@@ -40,61 +40,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
   const [version, setVersion] = useState<number>(0);
 
-  // Debug: Check if Supabase is configured
-  useEffect(() => {
-    // Add a timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      console.warn('Auth loading timeout - setting loading to false');
-      setLoading(false);
-    }, 10000); // 10 second timeout
-
-    // Get initial session
-    supabase.auth
-      .getSession()
-      .then(async ({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        }
-        setLoading(false);
-        setVersion(v => v + 1); // Increment version on initial session
-        clearTimeout(timeout);
-      })
-      .catch(error => {
-        setLoading(false);
-        clearTimeout(timeout);
-      });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (event === 'SIGNED_IN' && session?.user) {
-        await fetchProfile(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setProfile(null);
-      }
-
-      setLoading(false);
-      setVersion(v => v + 1); // Increment version on auth state change
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
-  }, []);
-
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (currSession: Session | null) => {
     try {
-      const res = await axios.get(`/api/profile/${userId}`, {
+      const res = await axios.get(`/api/profile/${currSession.user.id}`, {
         validateStatus: () => true,
         withCredentials: true,
-        headers: { Authorization: `Bearer ${session?.access_token}` },
+        headers: { Authorization: `Bearer ${currSession?.access_token}` },
       });
       if (res.data && res.data.user) {
         setProfile(res.data.user);
@@ -105,7 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Error fetching profile:', error);
       setProfile(null);
     }
-  };
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -159,6 +110,54 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Error updating profile:', error);
     }
   };
+
+  useEffect(() => {
+    // Add a timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.warn('Auth loading timeout - setting loading to false');
+      setLoading(false);
+    }, 10000); // 10 second timeout
+
+    // Get initial session
+    supabase.auth
+      .getSession()
+      .then(async ({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await fetchProfile(session);
+        }
+        setLoading(false);
+        setVersion(v => v + 1); // Increment version on initial session
+        clearTimeout(timeout);
+      })
+      .catch(error => {
+        setLoading(false);
+        clearTimeout(timeout);
+      });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (event === 'SIGNED_IN' && session?.user) {
+        await fetchProfile(session);
+      } else if (event === 'SIGNED_OUT') {
+        setProfile(null);
+      }
+
+      setLoading(false);
+      setVersion(v => v + 1); // Increment version on auth state change
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
+  }, [fetchProfile]);
 
   const value = {
     user,

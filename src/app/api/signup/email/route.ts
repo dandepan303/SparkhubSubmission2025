@@ -41,8 +41,10 @@ export async function POST(request: Request) {
     });
 
     // Auth errros
-    if (auth_error) return NextResponse.json<EmailSignUpRet>({ status: 'error', message: await parseError(auth_error.message, auth_error.code) }, { status: 400 });
-    if (!auth_data.user) return NextResponse.json<EmailSignUpRet>({ status: 'error', message: 'There was an issue signing up. Please try again' }, { status: 500 });
+    if (auth_error)
+      return NextResponse.json<EmailSignUpRet>({ status: 'error', message: await parseError(auth_error.message, auth_error.code) }, { status: 400 });
+    if (!auth_data.user)
+      return NextResponse.json<EmailSignUpRet>({ status: 'error', message: 'There was an issue signing up. Please try again' }, { status: 500 });
 
     auth_data_ = auth_data;
 
@@ -65,7 +67,10 @@ export async function POST(request: Request) {
 
     user_created = true;
 
-    return NextResponse.json<EmailSignUpRet>({ status: 'success', message: `Welcome ${name}. Please confirm your email`, redirectUrl: '/enable-mfa' }, { status: 200 });
+    return NextResponse.json<EmailSignUpRet>(
+      { status: 'success', message: `Welcome ${name}. Please confirm your email`, redirectUrl: '/enable-mfa' },
+      { status: 200 },
+    );
   } catch (error: any) {
     console.log('app/api/signup post error');
 

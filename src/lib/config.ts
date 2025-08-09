@@ -34,3 +34,16 @@ export const privateRoutes: Record<string, Role> = {
   '/api': 'user',
   '/developer': 'admin',
 };
+
+export const publicUserData = {
+  name: true,
+  contactInfo: true,
+  offerings: true,
+  jobApplications: true,
+  jobsCreated: true,
+  jobsWorking: true,
+  ratingsGiven: true,
+  ratingsReceived: true,
+  createdAt: true,
+  updatedAt: true,
+};

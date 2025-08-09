@@ -1,17 +1,11 @@
-'use client'
+'use client';
 
-import Onboard from "@/components/onboard";
-import FloatingMessage from "@/components/ui/floating-message";
-import { useSearchParams } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Onboard from '@/components/onboard';
 
-export default function OnboardPage() {
-	const searchParams = useSearchParams();
-	const message = searchParams.get('message');
+export default function Onboarding() {
+  const router = useRouter();
 
-	return (
-		<div className='w-full h-full'>
-			{message && <FloatingMessage>{message}</FloatingMessage>}
-			<Onboard />
-		</div>
-	);
+  return <Onboard />;
 }

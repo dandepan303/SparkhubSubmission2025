@@ -34,12 +34,6 @@ export async function updateSession(request: NextRequest) {
 
   // START OF CODE YOU CAN EDIT
 
-  // Easy of development - if enable -> TODO: REMOVE
-  if (process.env.NODE_ENV === 'development') {
-    console.log('middleware skipped due to development environment');
-    return supabaseResponse;
-  }
-
   const pathname = request.nextUrl.pathname;
 
   // loop over all protected routes
@@ -48,10 +42,10 @@ export async function updateSession(request: NextRequest) {
     if (pathname.startsWith(route)) {
       if (!user) {
         const url = request.nextUrl.clone();
-        url.pathname = '/signin';
+        url.pathname = '/auth/signin';
         return NextResponse.redirect(url);
       } else {
-        if (isAuthorized(user?.role, requiredRole)) {
+        if (!isAuthorized(user?.role, requiredRole)) {
           const url = request.nextUrl.clone();
           url.pathname = '/';
           url.searchParams.set('message', 'You do not have access to this page');

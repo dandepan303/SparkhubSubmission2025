@@ -11,6 +11,7 @@ export interface User {
   contactInfo: string | null;
   createdAt: Date;
   updatedAt: Date;
+  offerings?: Offering[]; // optional relation mirror
 }
 
 export interface Rating {
@@ -45,32 +46,23 @@ export interface Job {
   completedAt: Date | null;
 }
 
-export interface Inventory {
-  id: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface Offering {
   id: string;
   description: string;
   cost: number;
   quantity: number | null;
-  inventoryId: string;
+  userId: string;
   createdAt: Date;
   updatedAt: Date;
+  owner?: User;
 }
 
 // API ENDPOINTs
 
-export interface CreateRatingRequest {
-  value: number;
-  text?: string;
-  type: RatingType;
-  toId: string;
-  jobId?: string;
-}
+export type DefaultAPIRet = {
+  status: 'success' | 'error';
+  message: string;
+};
 
 // API ENDPOINTS
 export type EmailSignUpArgs = {
@@ -91,18 +83,25 @@ export type GoogleSignUpArgs = {
   name: string;
 };
 
-export type GoogleSignUpRet = {
-  status: string;
-  message: string;
-};
-
 export type DeveloperDeleteArgs = {
   deleteAuth?: boolean;
   deleteUserDb?: boolean;
   targetUserId?: string;
 };
 
-export type DeveloperDeleteRet = {
+export type OfferingGetRet = {
   status: 'success' | 'error';
   message: string;
+  offerings?: Offering[];
+};
+
+export type OfferingPostArgs = {
+  offeringId?: string;
+  description: string;
+  cost: number;
+  quantity: number | null;
+};
+
+export type OfferingDeleteArgs = {
+  offeringId: string;
 };

@@ -104,24 +104,11 @@ export default function GoogleAuthButton({ handleGoogleAuthCallback, setStatus, 
         delete window.googleAuthCallback;
       }
     };
-  }, [buttonContext, buttonText, setStatus, initAttemptedRef, handleGoogleAuthCallbackRef, config.google.client_id]);
+  }, [buttonContext, buttonText, setStatus, initAttemptedRef, handleGoogleAuthCallbackRef]);
 
   return (
-    <div className="flex items-center justify-center">
-      {/* Divider */}
-      <div className="w-full">
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/30" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-transparent px-2 font-semibold text-gray-700">or</span>
-          </div>
-        </div>
-
-        {/* Google Sign-In Button Container */}
-        <div className="g_id_signin flex w-full justify-center" data-context={buttonContext} style={{ minHeight: '44px' }}></div>
-      </div>
-    </div>
+    // The component now only renders the Google button container.
+    // All extra padding, wrappers, and the internal divider have been removed.
+    <div className="g_id_signin flex w-full justify-center" data-context={buttonContext} style={{ minHeight: '44px' }}></div>
   );
 }

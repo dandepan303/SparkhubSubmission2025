@@ -1,52 +1,64 @@
 'use client';
 
 import React, { useState } from 'react';
+import { MdOutlineClose, MdOutlineInfo, MdOutlineCheckCircleOutline, MdOutlineErrorOutline } from 'react-icons/md';
 
 interface FloatingMessageProps {
   children: React.ReactNode;
   className?: string;
-  color?: string; // Tailwind color e.g. 'blue', 'red', 'green', 'yellow', etc.
+  type?: 'info' | 'success' | 'error' | 'default';
 }
 
-export default function FloatingMessage({ children, color, className = '' }: FloatingMessageProps) {
+export default function FloatingMessage({ children, type = 'default', className = '' }: FloatingMessageProps) {
   const [visible, setVisible] = useState(true);
   if (!visible) return null;
 
-  // default is white
-  let bg = 'bg-white';
-  let border = 'border-gray-300';
-  let text = 'text-gray-800';
+  // Define styles and icon based on the message type
+  const styleMap = {
+    info: {
+      bg: 'bg-blue-50',
+      border: 'border-blue-500',
+      text: 'text-blue-800',
+      icon: MdOutlineInfo,
+    },
+    success: {
+      bg: 'bg-green-50',
+      border: 'border-green-500',
+      text: 'text-green-800',
+      icon: MdOutlineCheckCircleOutline,
+    },
+    error: {
+      bg: 'bg-red-50',
+      border: 'border-red-500',
+      text: 'text-red-800',
+      icon: MdOutlineErrorOutline,
+    },
+    default: {
+      bg: 'bg-white',
+      border: 'border-gray-200',
+      text: 'text-gray-800',
+      icon: MdOutlineInfo,
+    },
+  };
 
-  // gray, green, red, blue
-  if (color === 'gray') {
-    bg = 'bg-gray-100';
-    border = 'border-gray-400';
-    text = 'text-gray-800';
-  } else if (color === 'blue') {
-    bg = 'bg-blue-100';
-    border = 'border-blue-400';
-    text = 'text-blue-800';
-  } else if (color === 'green') {
-    bg = 'bg-green-100';
-    border = 'border-green-400';
-    text = 'text-green-800';
-  } else if (color === 'red') {
-    bg = 'bg-red-100';
-    border = 'border-red-400';
-    text = 'text-red-800';
-  }
+  const { bg, border, text, icon: IconComponent } = styleMap[type];
 
   return (
     <div
-      className={`absolute top-10 right-10 left-10 z-100 rounded-xl ${bg} border-[0.12rem] ${border} px-4 py-2.5 ${text} flex items-center justify-between shadow-md ${className}`}
+      className={`fixed top-24 left-1/2 z-50 rounded-xl ${bg} border ${border} px-5 py-4 ${text} animate-slideIn flex -translate-x-1/2 transform items-center justify-between shadow-lg transition-all duration-300 ${className}`}
       role="alert">
-      <span>{children}</span>
+      <div className="flex items-center space-x-3">
+        <span className="text-2xl">
+          <IconComponent />
+        </span>
+        <span>{children}</span>
+      </div>
       <button
         onClick={() => setVisible(false)}
-        className="ml-4 rounded px-2 py-1 text-lg font-bold text-gray-500 transition hover:bg-gray-200 hover:text-gray-700"
+        className="ml-4 rounded-full p-1 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-700 focus:ring-2 focus:ring-gray-300 focus:outline-none"
         aria-label="Close"
         type="button">
-        ×
+        <MdOutlineClose className="text-xl" />
       </button>
     </div>
   );
