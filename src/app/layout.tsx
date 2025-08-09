@@ -1,17 +1,16 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { GeistSans } from 'next/font/google';
+import { GeistMono } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/components/auth/auth-provider';
 import AuthProtecter from '@/components/auth/auth-protecter';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const nunito = Nunito({
   subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700', '800'],
+  variable: '--font-nunito',
 });
 
 export const metadata: Metadata = {
@@ -26,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${GeistSans.variable} ${GeistMono.variable} ${nunito.variable} font-nunito antialiased`}
+      >
         <AuthProvider>
           <AuthProtecter>
             <script src="https://accounts.google.com/gsi/client" async defer></script>

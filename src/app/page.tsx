@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
@@ -13,7 +14,7 @@ export default function TradeSpaceLanding() {
   const [selectedTrade, setSelectedTrade] = useState('Fresh vegetables from garden');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSignInPressed, setIsSignInPressed] = useState(false);
-  const [isPageLoading, setIsPageLoading] = useState(true); // New state to manage loading screen
+  const [isLoading, setIsLoading] = useState(true); // Renamed state to avoid conflict with `isPageLoading`
 
   const router = useRouter();
   const { user } = useAuth();
@@ -28,8 +29,11 @@ export default function TradeSpaceLanding() {
   ];
 
   useEffect(() => {
-    setIsPageLoading(false);
-  }, [setIsPageLoading]);
+    // This useEffect is now solely responsible for setting the loading state
+    // after the initial render, ensuring the component doesn't show loading
+    // on subsequent renders or after the auth check is complete.
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -68,12 +72,12 @@ export default function TradeSpaceLanding() {
   const rotateX = mousePosition.y * -15;
   const rotateY = mousePosition.x * 15;
 
-  // Conditional rendering: show the Loading component until auth check is done
-  if (isPageLoading) {
+  // Conditional rendering: show the Loading component until the component has finished its initial render
+  if (isLoading) {
     return <Loading message={null} />;
   }
 
-  // Render the full landing page content once the auth check is complete and no user is found
+  // Render the full landing page content
   return (
     <div className="min-h-screen overflow-hidden bg-white">
       {message && message.trim() !== '' && <FloatingMessage>{message}</FloatingMessage>}
