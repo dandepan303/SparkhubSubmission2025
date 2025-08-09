@@ -16,7 +16,7 @@ model User {
   contactInfo     String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  offerings       Offering[]       @relation("Owner")
+  inventories     inventories?
   jobApplications JobApplication[]
   jobsCreated     Job[]            @relation("JobHirer")
   jobsWorking     Job[]            @relation("JobWorker")
@@ -79,16 +79,25 @@ model Rating {
 }
 
 model Offering {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   description String
   cost        Int
   quantity    Int?
-  userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  owner       User     @relation("Owner", fields: [userId], references: [id], onDelete: Cascade)
+  inventoryId String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  inventories inventories @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
 
   @@map("offerings")
+}
+
+model inventories {
+  id        String     @id
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  users     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  offerings Offering[]
 }
 
 enum JobStatus {

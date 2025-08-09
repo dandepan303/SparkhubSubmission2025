@@ -10,54 +10,46 @@ datasource db {
 }
 
 model User {
-  id              String           @id
-  email           String           @unique
+  id              String   @id
+  email           String   @unique
   name            String
   contactInfo     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  offerings Offering[] @relation("Owner")
-  jobApplications JobApplication[]
-  jobsCreated     Job[]            @relation("JobHirer")
-  jobsWorking     Job[]            @relation("JobWorker")
-  ratingsGiven    Rating[]         @relation("RatingFrom")
-  ratingsReceived Rating[]         @relation("RatingTo")
+
+  jobApplications Job[]    @relation("JobApplications")
+
+  jobsCreated     Job[]    @relation("JobHirer")
+  jobsWorking     Job[]    @relation("JobWorker")
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  ratingFrom      Rating[]
+  ratingTo        Rating[]
 
   @@map("users")
 }
 
 model Job {
-  id           String           @id @default(cuid())
+  id           String    @id @default(cuid())
   title        String
   description  String
   location     String
-  status       JobStatus        @default(SEARCHING)
+  status       JobStatus @default(SEARCHING)
+
   hirerId      String
   workerId     String?
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
-  completedAt  DateTime?
-  applications JobApplication[]
-  hirer        User             @relation("JobHirer", fields: [hirerId], references: [id], onDelete: Cascade)
-  worker       User?            @relation("JobWorker", fields: [workerId], references: [id])
-  ratings      Rating[]
+  hirer        User      @relation("JobHirer", fields: [hirerId], references: [id], onDelete: Cascade)
+  worker       User?     @relation("JobWorker", fields: [workerId], references: [id])
+
+  applications User[]    @relation("JobApplications")
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([status])
   @@index([location])
   @@index([createdAt])
   @@map("jobs")
-}
-
-model JobApplication {
-  id        String   @id @default(cuid())
-  jobId     String
-  userId    String
-  appliedAt DateTime @default(now())
-  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([jobId, userId])
-  @@map("job_applications")
 }
 
 model Rating {
@@ -79,14 +71,14 @@ model Rating {
 }
 
 model Offering {
-  id          String    @id @default(cuid())
+  id          String      @id @default(cuid())
   description String
   cost        Int
   quantity    Int?
-  userId      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  owner       User      @relation("Owner", fields: [userId], references: [id], onDelete: Cascade)
+  inventoryId String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  inventories inventories @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
 
   @@map("offerings")
 }

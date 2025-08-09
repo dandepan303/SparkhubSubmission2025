@@ -38,6 +38,11 @@ export type Rating = $Result.DefaultSelection<Prisma.$RatingPayload>
  * 
  */
 export type Offering = $Result.DefaultSelection<Prisma.$OfferingPayload>
+/**
+ * Model inventories
+ * 
+ */
+export type inventories = $Result.DefaultSelection<Prisma.$inventoriesPayload>
 
 /**
  * Enums
@@ -243,6 +248,16 @@ export class PrismaClient<
     * ```
     */
   get offering(): Prisma.OfferingDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.inventories`: Exposes CRUD operations for the **inventories** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Inventories
+    * const inventories = await prisma.inventories.findMany()
+    * ```
+    */
+  get inventories(): Prisma.inventoriesDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -687,7 +702,8 @@ export namespace Prisma {
     Job: 'Job',
     JobApplication: 'JobApplication',
     Rating: 'Rating',
-    Offering: 'Offering'
+    Offering: 'Offering',
+    inventories: 'inventories'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -706,7 +722,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "job" | "jobApplication" | "rating" | "offering"
+      modelProps: "user" | "job" | "jobApplication" | "rating" | "offering" | "inventories"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1080,6 +1096,80 @@ export namespace Prisma {
           }
         }
       }
+      inventories: {
+        payload: Prisma.$inventoriesPayload<ExtArgs>
+        fields: Prisma.inventoriesFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.inventoriesFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.inventoriesFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          findFirst: {
+            args: Prisma.inventoriesFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.inventoriesFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          findMany: {
+            args: Prisma.inventoriesFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>[]
+          }
+          create: {
+            args: Prisma.inventoriesCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          createMany: {
+            args: Prisma.inventoriesCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.inventoriesCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>[]
+          }
+          delete: {
+            args: Prisma.inventoriesDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          update: {
+            args: Prisma.inventoriesUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          deleteMany: {
+            args: Prisma.inventoriesDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.inventoriesUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.inventoriesUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>[]
+          }
+          upsert: {
+            args: Prisma.inventoriesUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$inventoriesPayload>
+          }
+          aggregate: {
+            args: Prisma.InventoriesAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateInventories>
+          }
+          groupBy: {
+            args: Prisma.inventoriesGroupByArgs<ExtArgs>
+            result: $Utils.Optional<InventoriesGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.inventoriesCountArgs<ExtArgs>
+            result: $Utils.Optional<InventoriesCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1177,6 +1267,7 @@ export namespace Prisma {
     jobApplication?: JobApplicationOmit
     rating?: RatingOmit
     offering?: OfferingOmit
+    inventories?: inventoriesOmit
   }
 
   /* Types for Logging */
@@ -1276,7 +1367,6 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    offerings: number
     jobApplications: number
     jobsCreated: number
     jobsWorking: number
@@ -1285,7 +1375,6 @@ export namespace Prisma {
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    offerings?: boolean | UserCountOutputTypeCountOfferingsArgs
     jobApplications?: boolean | UserCountOutputTypeCountJobApplicationsArgs
     jobsCreated?: boolean | UserCountOutputTypeCountJobsCreatedArgs
     jobsWorking?: boolean | UserCountOutputTypeCountJobsWorkingArgs
@@ -1302,13 +1391,6 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountOfferingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: OfferingWhereInput
   }
 
   /**
@@ -1384,6 +1466,37 @@ export namespace Prisma {
    */
   export type JobCountOutputTypeCountRatingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RatingWhereInput
+  }
+
+
+  /**
+   * Count Type InventoriesCountOutputType
+   */
+
+  export type InventoriesCountOutputType = {
+    offerings: number
+  }
+
+  export type InventoriesCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    offerings?: boolean | InventoriesCountOutputTypeCountOfferingsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * InventoriesCountOutputType without action
+   */
+  export type InventoriesCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the InventoriesCountOutputType
+     */
+    select?: InventoriesCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * InventoriesCountOutputType without action
+   */
+  export type InventoriesCountOutputTypeCountOfferingsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OfferingWhereInput
   }
 
 
@@ -1563,7 +1676,7 @@ export namespace Prisma {
     contactInfo?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    offerings?: boolean | User$offeringsArgs<ExtArgs>
+    inventories?: boolean | User$inventoriesArgs<ExtArgs>
     jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
     jobsCreated?: boolean | User$jobsCreatedArgs<ExtArgs>
     jobsWorking?: boolean | User$jobsWorkingArgs<ExtArgs>
@@ -1601,7 +1714,7 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "contactInfo" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    offerings?: boolean | User$offeringsArgs<ExtArgs>
+    inventories?: boolean | User$inventoriesArgs<ExtArgs>
     jobApplications?: boolean | User$jobApplicationsArgs<ExtArgs>
     jobsCreated?: boolean | User$jobsCreatedArgs<ExtArgs>
     jobsWorking?: boolean | User$jobsWorkingArgs<ExtArgs>
@@ -1615,7 +1728,7 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      offerings: Prisma.$OfferingPayload<ExtArgs>[]
+      inventories: Prisma.$inventoriesPayload<ExtArgs> | null
       jobApplications: Prisma.$JobApplicationPayload<ExtArgs>[]
       jobsCreated: Prisma.$JobPayload<ExtArgs>[]
       jobsWorking: Prisma.$JobPayload<ExtArgs>[]
@@ -2023,7 +2136,7 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    offerings<T extends User$offeringsArgs<ExtArgs> = {}>(args?: Subset<T, User$offeringsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OfferingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    inventories<T extends User$inventoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$inventoriesArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     jobApplications<T extends User$jobApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$jobApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     jobsCreated<T extends User$jobsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$jobsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     jobsWorking<T extends User$jobsWorkingArgs<ExtArgs> = {}>(args?: Subset<T, User$jobsWorkingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$JobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2452,27 +2565,22 @@ export namespace Prisma {
   }
 
   /**
-   * User.offerings
+   * User.inventories
    */
-  export type User$offeringsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$inventoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Offering
+     * Select specific fields to fetch from the inventories
      */
-    select?: OfferingSelect<ExtArgs> | null
+    select?: inventoriesSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Offering
+     * Omit specific fields from the inventories
      */
-    omit?: OfferingOmit<ExtArgs> | null
+    omit?: inventoriesOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: OfferingInclude<ExtArgs> | null
-    where?: OfferingWhereInput
-    orderBy?: OfferingOrderByWithRelationInput | OfferingOrderByWithRelationInput[]
-    cursor?: OfferingWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: OfferingScalarFieldEnum | OfferingScalarFieldEnum[]
+    include?: inventoriesInclude<ExtArgs> | null
+    where?: inventoriesWhereInput
   }
 
   /**
@@ -6081,7 +6189,7 @@ export namespace Prisma {
     description: string | null
     cost: number | null
     quantity: number | null
-    userId: string | null
+    inventoryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6091,7 +6199,7 @@ export namespace Prisma {
     description: string | null
     cost: number | null
     quantity: number | null
-    userId: string | null
+    inventoryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6101,7 +6209,7 @@ export namespace Prisma {
     description: number
     cost: number
     quantity: number
-    userId: number
+    inventoryId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6123,7 +6231,7 @@ export namespace Prisma {
     description?: true
     cost?: true
     quantity?: true
-    userId?: true
+    inventoryId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6133,7 +6241,7 @@ export namespace Prisma {
     description?: true
     cost?: true
     quantity?: true
-    userId?: true
+    inventoryId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6143,7 +6251,7 @@ export namespace Prisma {
     description?: true
     cost?: true
     quantity?: true
-    userId?: true
+    inventoryId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6240,7 +6348,7 @@ export namespace Prisma {
     description: string
     cost: number
     quantity: number | null
-    userId: string
+    inventoryId: string
     createdAt: Date
     updatedAt: Date
     _count: OfferingCountAggregateOutputType | null
@@ -6269,10 +6377,10 @@ export namespace Prisma {
     description?: boolean
     cost?: boolean
     quantity?: boolean
-    userId?: boolean
+    inventoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["offering"]>
 
   export type OfferingSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6280,10 +6388,10 @@ export namespace Prisma {
     description?: boolean
     cost?: boolean
     quantity?: boolean
-    userId?: boolean
+    inventoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["offering"]>
 
   export type OfferingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6291,10 +6399,10 @@ export namespace Prisma {
     description?: boolean
     cost?: boolean
     quantity?: boolean
-    userId?: boolean
+    inventoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["offering"]>
 
   export type OfferingSelectScalar = {
@@ -6302,33 +6410,33 @@ export namespace Prisma {
     description?: boolean
     cost?: boolean
     quantity?: boolean
-    userId?: boolean
+    inventoryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OfferingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "description" | "cost" | "quantity" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["offering"]>
+  export type OfferingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "description" | "cost" | "quantity" | "inventoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["offering"]>
   export type OfferingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }
   export type OfferingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }
   export type OfferingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    owner?: boolean | UserDefaultArgs<ExtArgs>
+    inventories?: boolean | inventoriesDefaultArgs<ExtArgs>
   }
 
   export type $OfferingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Offering"
     objects: {
-      owner: Prisma.$UserPayload<ExtArgs>
+      inventories: Prisma.$inventoriesPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       description: string
       cost: number
       quantity: number | null
-      userId: string
+      inventoryId: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["offering"]>
@@ -6725,7 +6833,7 @@ export namespace Prisma {
    */
   export interface Prisma__OfferingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    owner<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inventories<T extends inventoriesDefaultArgs<ExtArgs> = {}>(args?: Subset<T, inventoriesDefaultArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6759,7 +6867,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Offering", 'String'>
     readonly cost: FieldRef<"Offering", 'Int'>
     readonly quantity: FieldRef<"Offering", 'Int'>
-    readonly userId: FieldRef<"Offering", 'String'>
+    readonly inventoryId: FieldRef<"Offering", 'String'>
     readonly createdAt: FieldRef<"Offering", 'DateTime'>
     readonly updatedAt: FieldRef<"Offering", 'DateTime'>
   }
@@ -7177,6 +7285,1081 @@ export namespace Prisma {
 
 
   /**
+   * Model inventories
+   */
+
+  export type AggregateInventories = {
+    _count: InventoriesCountAggregateOutputType | null
+    _min: InventoriesMinAggregateOutputType | null
+    _max: InventoriesMaxAggregateOutputType | null
+  }
+
+  export type InventoriesMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type InventoriesMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type InventoriesCountAggregateOutputType = {
+    id: number
+    userId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type InventoriesMinAggregateInputType = {
+    id?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type InventoriesMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type InventoriesCountAggregateInputType = {
+    id?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type InventoriesAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which inventories to aggregate.
+     */
+    where?: inventoriesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of inventories to fetch.
+     */
+    orderBy?: inventoriesOrderByWithRelationInput | inventoriesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: inventoriesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` inventories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` inventories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned inventories
+    **/
+    _count?: true | InventoriesCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: InventoriesMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: InventoriesMaxAggregateInputType
+  }
+
+  export type GetInventoriesAggregateType<T extends InventoriesAggregateArgs> = {
+        [P in keyof T & keyof AggregateInventories]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateInventories[P]>
+      : GetScalarType<T[P], AggregateInventories[P]>
+  }
+
+
+
+
+  export type inventoriesGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: inventoriesWhereInput
+    orderBy?: inventoriesOrderByWithAggregationInput | inventoriesOrderByWithAggregationInput[]
+    by: InventoriesScalarFieldEnum[] | InventoriesScalarFieldEnum
+    having?: inventoriesScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: InventoriesCountAggregateInputType | true
+    _min?: InventoriesMinAggregateInputType
+    _max?: InventoriesMaxAggregateInputType
+  }
+
+  export type InventoriesGroupByOutputType = {
+    id: string
+    userId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: InventoriesCountAggregateOutputType | null
+    _min: InventoriesMinAggregateOutputType | null
+    _max: InventoriesMaxAggregateOutputType | null
+  }
+
+  type GetInventoriesGroupByPayload<T extends inventoriesGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<InventoriesGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof InventoriesGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], InventoriesGroupByOutputType[P]>
+            : GetScalarType<T[P], InventoriesGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type inventoriesSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    users?: boolean | UserDefaultArgs<ExtArgs>
+    offerings?: boolean | inventories$offeringsArgs<ExtArgs>
+    _count?: boolean | InventoriesCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inventories"]>
+
+  export type inventoriesSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    users?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inventories"]>
+
+  export type inventoriesSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    users?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["inventories"]>
+
+  export type inventoriesSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type inventoriesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["inventories"]>
+  export type inventoriesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | UserDefaultArgs<ExtArgs>
+    offerings?: boolean | inventories$offeringsArgs<ExtArgs>
+    _count?: boolean | InventoriesCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type inventoriesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type inventoriesIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $inventoriesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "inventories"
+    objects: {
+      users: Prisma.$UserPayload<ExtArgs>
+      offerings: Prisma.$OfferingPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["inventories"]>
+    composites: {}
+  }
+
+  type inventoriesGetPayload<S extends boolean | null | undefined | inventoriesDefaultArgs> = $Result.GetResult<Prisma.$inventoriesPayload, S>
+
+  type inventoriesCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<inventoriesFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: InventoriesCountAggregateInputType | true
+    }
+
+  export interface inventoriesDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['inventories'], meta: { name: 'inventories' } }
+    /**
+     * Find zero or one Inventories that matches the filter.
+     * @param {inventoriesFindUniqueArgs} args - Arguments to find a Inventories
+     * @example
+     * // Get one Inventories
+     * const inventories = await prisma.inventories.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends inventoriesFindUniqueArgs>(args: SelectSubset<T, inventoriesFindUniqueArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Inventories that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {inventoriesFindUniqueOrThrowArgs} args - Arguments to find a Inventories
+     * @example
+     * // Get one Inventories
+     * const inventories = await prisma.inventories.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends inventoriesFindUniqueOrThrowArgs>(args: SelectSubset<T, inventoriesFindUniqueOrThrowArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Inventories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesFindFirstArgs} args - Arguments to find a Inventories
+     * @example
+     * // Get one Inventories
+     * const inventories = await prisma.inventories.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends inventoriesFindFirstArgs>(args?: SelectSubset<T, inventoriesFindFirstArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Inventories that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesFindFirstOrThrowArgs} args - Arguments to find a Inventories
+     * @example
+     * // Get one Inventories
+     * const inventories = await prisma.inventories.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends inventoriesFindFirstOrThrowArgs>(args?: SelectSubset<T, inventoriesFindFirstOrThrowArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Inventories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Inventories
+     * const inventories = await prisma.inventories.findMany()
+     * 
+     * // Get first 10 Inventories
+     * const inventories = await prisma.inventories.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const inventoriesWithIdOnly = await prisma.inventories.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends inventoriesFindManyArgs>(args?: SelectSubset<T, inventoriesFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Inventories.
+     * @param {inventoriesCreateArgs} args - Arguments to create a Inventories.
+     * @example
+     * // Create one Inventories
+     * const Inventories = await prisma.inventories.create({
+     *   data: {
+     *     // ... data to create a Inventories
+     *   }
+     * })
+     * 
+     */
+    create<T extends inventoriesCreateArgs>(args: SelectSubset<T, inventoriesCreateArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Inventories.
+     * @param {inventoriesCreateManyArgs} args - Arguments to create many Inventories.
+     * @example
+     * // Create many Inventories
+     * const inventories = await prisma.inventories.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends inventoriesCreateManyArgs>(args?: SelectSubset<T, inventoriesCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Inventories and returns the data saved in the database.
+     * @param {inventoriesCreateManyAndReturnArgs} args - Arguments to create many Inventories.
+     * @example
+     * // Create many Inventories
+     * const inventories = await prisma.inventories.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Inventories and only return the `id`
+     * const inventoriesWithIdOnly = await prisma.inventories.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends inventoriesCreateManyAndReturnArgs>(args?: SelectSubset<T, inventoriesCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Inventories.
+     * @param {inventoriesDeleteArgs} args - Arguments to delete one Inventories.
+     * @example
+     * // Delete one Inventories
+     * const Inventories = await prisma.inventories.delete({
+     *   where: {
+     *     // ... filter to delete one Inventories
+     *   }
+     * })
+     * 
+     */
+    delete<T extends inventoriesDeleteArgs>(args: SelectSubset<T, inventoriesDeleteArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Inventories.
+     * @param {inventoriesUpdateArgs} args - Arguments to update one Inventories.
+     * @example
+     * // Update one Inventories
+     * const inventories = await prisma.inventories.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends inventoriesUpdateArgs>(args: SelectSubset<T, inventoriesUpdateArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Inventories.
+     * @param {inventoriesDeleteManyArgs} args - Arguments to filter Inventories to delete.
+     * @example
+     * // Delete a few Inventories
+     * const { count } = await prisma.inventories.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends inventoriesDeleteManyArgs>(args?: SelectSubset<T, inventoriesDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Inventories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Inventories
+     * const inventories = await prisma.inventories.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends inventoriesUpdateManyArgs>(args: SelectSubset<T, inventoriesUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Inventories and returns the data updated in the database.
+     * @param {inventoriesUpdateManyAndReturnArgs} args - Arguments to update many Inventories.
+     * @example
+     * // Update many Inventories
+     * const inventories = await prisma.inventories.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Inventories and only return the `id`
+     * const inventoriesWithIdOnly = await prisma.inventories.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends inventoriesUpdateManyAndReturnArgs>(args: SelectSubset<T, inventoriesUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Inventories.
+     * @param {inventoriesUpsertArgs} args - Arguments to update or create a Inventories.
+     * @example
+     * // Update or create a Inventories
+     * const inventories = await prisma.inventories.upsert({
+     *   create: {
+     *     // ... data to create a Inventories
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Inventories we want to update
+     *   }
+     * })
+     */
+    upsert<T extends inventoriesUpsertArgs>(args: SelectSubset<T, inventoriesUpsertArgs<ExtArgs>>): Prisma__inventoriesClient<$Result.GetResult<Prisma.$inventoriesPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Inventories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesCountArgs} args - Arguments to filter Inventories to count.
+     * @example
+     * // Count the number of Inventories
+     * const count = await prisma.inventories.count({
+     *   where: {
+     *     // ... the filter for the Inventories we want to count
+     *   }
+     * })
+    **/
+    count<T extends inventoriesCountArgs>(
+      args?: Subset<T, inventoriesCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], InventoriesCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Inventories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {InventoriesAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends InventoriesAggregateArgs>(args: Subset<T, InventoriesAggregateArgs>): Prisma.PrismaPromise<GetInventoriesAggregateType<T>>
+
+    /**
+     * Group by Inventories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {inventoriesGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends inventoriesGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: inventoriesGroupByArgs['orderBy'] }
+        : { orderBy?: inventoriesGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, inventoriesGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetInventoriesGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the inventories model
+   */
+  readonly fields: inventoriesFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for inventories.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__inventoriesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    users<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    offerings<T extends inventories$offeringsArgs<ExtArgs> = {}>(args?: Subset<T, inventories$offeringsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OfferingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the inventories model
+   */
+  interface inventoriesFieldRefs {
+    readonly id: FieldRef<"inventories", 'String'>
+    readonly userId: FieldRef<"inventories", 'String'>
+    readonly createdAt: FieldRef<"inventories", 'DateTime'>
+    readonly updatedAt: FieldRef<"inventories", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * inventories findUnique
+   */
+  export type inventoriesFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter, which inventories to fetch.
+     */
+    where: inventoriesWhereUniqueInput
+  }
+
+  /**
+   * inventories findUniqueOrThrow
+   */
+  export type inventoriesFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter, which inventories to fetch.
+     */
+    where: inventoriesWhereUniqueInput
+  }
+
+  /**
+   * inventories findFirst
+   */
+  export type inventoriesFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter, which inventories to fetch.
+     */
+    where?: inventoriesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of inventories to fetch.
+     */
+    orderBy?: inventoriesOrderByWithRelationInput | inventoriesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for inventories.
+     */
+    cursor?: inventoriesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` inventories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` inventories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of inventories.
+     */
+    distinct?: InventoriesScalarFieldEnum | InventoriesScalarFieldEnum[]
+  }
+
+  /**
+   * inventories findFirstOrThrow
+   */
+  export type inventoriesFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter, which inventories to fetch.
+     */
+    where?: inventoriesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of inventories to fetch.
+     */
+    orderBy?: inventoriesOrderByWithRelationInput | inventoriesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for inventories.
+     */
+    cursor?: inventoriesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` inventories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` inventories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of inventories.
+     */
+    distinct?: InventoriesScalarFieldEnum | InventoriesScalarFieldEnum[]
+  }
+
+  /**
+   * inventories findMany
+   */
+  export type inventoriesFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter, which inventories to fetch.
+     */
+    where?: inventoriesWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of inventories to fetch.
+     */
+    orderBy?: inventoriesOrderByWithRelationInput | inventoriesOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing inventories.
+     */
+    cursor?: inventoriesWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` inventories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` inventories.
+     */
+    skip?: number
+    distinct?: InventoriesScalarFieldEnum | InventoriesScalarFieldEnum[]
+  }
+
+  /**
+   * inventories create
+   */
+  export type inventoriesCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * The data needed to create a inventories.
+     */
+    data: XOR<inventoriesCreateInput, inventoriesUncheckedCreateInput>
+  }
+
+  /**
+   * inventories createMany
+   */
+  export type inventoriesCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many inventories.
+     */
+    data: inventoriesCreateManyInput | inventoriesCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * inventories createManyAndReturn
+   */
+  export type inventoriesCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * The data used to create many inventories.
+     */
+    data: inventoriesCreateManyInput | inventoriesCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * inventories update
+   */
+  export type inventoriesUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * The data needed to update a inventories.
+     */
+    data: XOR<inventoriesUpdateInput, inventoriesUncheckedUpdateInput>
+    /**
+     * Choose, which inventories to update.
+     */
+    where: inventoriesWhereUniqueInput
+  }
+
+  /**
+   * inventories updateMany
+   */
+  export type inventoriesUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update inventories.
+     */
+    data: XOR<inventoriesUpdateManyMutationInput, inventoriesUncheckedUpdateManyInput>
+    /**
+     * Filter which inventories to update
+     */
+    where?: inventoriesWhereInput
+    /**
+     * Limit how many inventories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * inventories updateManyAndReturn
+   */
+  export type inventoriesUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * The data used to update inventories.
+     */
+    data: XOR<inventoriesUpdateManyMutationInput, inventoriesUncheckedUpdateManyInput>
+    /**
+     * Filter which inventories to update
+     */
+    where?: inventoriesWhereInput
+    /**
+     * Limit how many inventories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * inventories upsert
+   */
+  export type inventoriesUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * The filter to search for the inventories to update in case it exists.
+     */
+    where: inventoriesWhereUniqueInput
+    /**
+     * In case the inventories found by the `where` argument doesn't exist, create a new inventories with this data.
+     */
+    create: XOR<inventoriesCreateInput, inventoriesUncheckedCreateInput>
+    /**
+     * In case the inventories was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<inventoriesUpdateInput, inventoriesUncheckedUpdateInput>
+  }
+
+  /**
+   * inventories delete
+   */
+  export type inventoriesDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+    /**
+     * Filter which inventories to delete.
+     */
+    where: inventoriesWhereUniqueInput
+  }
+
+  /**
+   * inventories deleteMany
+   */
+  export type inventoriesDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which inventories to delete
+     */
+    where?: inventoriesWhereInput
+    /**
+     * Limit how many inventories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * inventories.offerings
+   */
+  export type inventories$offeringsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Offering
+     */
+    select?: OfferingSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Offering
+     */
+    omit?: OfferingOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OfferingInclude<ExtArgs> | null
+    where?: OfferingWhereInput
+    orderBy?: OfferingOrderByWithRelationInput | OfferingOrderByWithRelationInput[]
+    cursor?: OfferingWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OfferingScalarFieldEnum | OfferingScalarFieldEnum[]
+  }
+
+  /**
+   * inventories without action
+   */
+  export type inventoriesDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the inventories
+     */
+    select?: inventoriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the inventories
+     */
+    omit?: inventoriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: inventoriesInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -7248,12 +8431,22 @@ export namespace Prisma {
     description: 'description',
     cost: 'cost',
     quantity: 'quantity',
-    userId: 'userId',
+    inventoryId: 'inventoryId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type OfferingScalarFieldEnum = (typeof OfferingScalarFieldEnum)[keyof typeof OfferingScalarFieldEnum]
+
+
+  export const InventoriesScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type InventoriesScalarFieldEnum = (typeof InventoriesScalarFieldEnum)[keyof typeof InventoriesScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7382,7 +8575,7 @@ export namespace Prisma {
     contactInfo?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    offerings?: OfferingListRelationFilter
+    inventories?: XOR<InventoriesNullableScalarRelationFilter, inventoriesWhereInput> | null
     jobApplications?: JobApplicationListRelationFilter
     jobsCreated?: JobListRelationFilter
     jobsWorking?: JobListRelationFilter
@@ -7397,7 +8590,7 @@ export namespace Prisma {
     contactInfo?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    offerings?: OfferingOrderByRelationAggregateInput
+    inventories?: inventoriesOrderByWithRelationInput
     jobApplications?: JobApplicationOrderByRelationAggregateInput
     jobsCreated?: JobOrderByRelationAggregateInput
     jobsWorking?: JobOrderByRelationAggregateInput
@@ -7415,7 +8608,7 @@ export namespace Prisma {
     contactInfo?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    offerings?: OfferingListRelationFilter
+    inventories?: XOR<InventoriesNullableScalarRelationFilter, inventoriesWhereInput> | null
     jobApplications?: JobApplicationListRelationFilter
     jobsCreated?: JobListRelationFilter
     jobsWorking?: JobListRelationFilter
@@ -7681,10 +8874,10 @@ export namespace Prisma {
     description?: StringFilter<"Offering"> | string
     cost?: IntFilter<"Offering"> | number
     quantity?: IntNullableFilter<"Offering"> | number | null
-    userId?: StringFilter<"Offering"> | string
+    inventoryId?: StringFilter<"Offering"> | string
     createdAt?: DateTimeFilter<"Offering"> | Date | string
     updatedAt?: DateTimeFilter<"Offering"> | Date | string
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    inventories?: XOR<InventoriesScalarRelationFilter, inventoriesWhereInput>
   }
 
   export type OfferingOrderByWithRelationInput = {
@@ -7692,10 +8885,10 @@ export namespace Prisma {
     description?: SortOrder
     cost?: SortOrder
     quantity?: SortOrderInput | SortOrder
-    userId?: SortOrder
+    inventoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    owner?: UserOrderByWithRelationInput
+    inventories?: inventoriesOrderByWithRelationInput
   }
 
   export type OfferingWhereUniqueInput = Prisma.AtLeast<{
@@ -7706,10 +8899,10 @@ export namespace Prisma {
     description?: StringFilter<"Offering"> | string
     cost?: IntFilter<"Offering"> | number
     quantity?: IntNullableFilter<"Offering"> | number | null
-    userId?: StringFilter<"Offering"> | string
+    inventoryId?: StringFilter<"Offering"> | string
     createdAt?: DateTimeFilter<"Offering"> | Date | string
     updatedAt?: DateTimeFilter<"Offering"> | Date | string
-    owner?: XOR<UserScalarRelationFilter, UserWhereInput>
+    inventories?: XOR<InventoriesScalarRelationFilter, inventoriesWhereInput>
   }, "id">
 
   export type OfferingOrderByWithAggregationInput = {
@@ -7717,7 +8910,7 @@ export namespace Prisma {
     description?: SortOrder
     cost?: SortOrder
     quantity?: SortOrderInput | SortOrder
-    userId?: SortOrder
+    inventoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OfferingCountOrderByAggregateInput
@@ -7735,9 +8928,62 @@ export namespace Prisma {
     description?: StringWithAggregatesFilter<"Offering"> | string
     cost?: IntWithAggregatesFilter<"Offering"> | number
     quantity?: IntNullableWithAggregatesFilter<"Offering"> | number | null
-    userId?: StringWithAggregatesFilter<"Offering"> | string
+    inventoryId?: StringWithAggregatesFilter<"Offering"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Offering"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Offering"> | Date | string
+  }
+
+  export type inventoriesWhereInput = {
+    AND?: inventoriesWhereInput | inventoriesWhereInput[]
+    OR?: inventoriesWhereInput[]
+    NOT?: inventoriesWhereInput | inventoriesWhereInput[]
+    id?: StringFilter<"inventories"> | string
+    userId?: StringFilter<"inventories"> | string
+    createdAt?: DateTimeFilter<"inventories"> | Date | string
+    updatedAt?: DateTimeFilter<"inventories"> | Date | string
+    users?: XOR<UserScalarRelationFilter, UserWhereInput>
+    offerings?: OfferingListRelationFilter
+  }
+
+  export type inventoriesOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    users?: UserOrderByWithRelationInput
+    offerings?: OfferingOrderByRelationAggregateInput
+  }
+
+  export type inventoriesWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId?: string
+    AND?: inventoriesWhereInput | inventoriesWhereInput[]
+    OR?: inventoriesWhereInput[]
+    NOT?: inventoriesWhereInput | inventoriesWhereInput[]
+    createdAt?: DateTimeFilter<"inventories"> | Date | string
+    updatedAt?: DateTimeFilter<"inventories"> | Date | string
+    users?: XOR<UserScalarRelationFilter, UserWhereInput>
+    offerings?: OfferingListRelationFilter
+  }, "id" | "userId">
+
+  export type inventoriesOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: inventoriesCountOrderByAggregateInput
+    _max?: inventoriesMaxOrderByAggregateInput
+    _min?: inventoriesMinOrderByAggregateInput
+  }
+
+  export type inventoriesScalarWhereWithAggregatesInput = {
+    AND?: inventoriesScalarWhereWithAggregatesInput | inventoriesScalarWhereWithAggregatesInput[]
+    OR?: inventoriesScalarWhereWithAggregatesInput[]
+    NOT?: inventoriesScalarWhereWithAggregatesInput | inventoriesScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"inventories"> | string
+    userId?: StringWithAggregatesFilter<"inventories"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"inventories"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"inventories"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -7747,7 +8993,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
     jobsCreated?: JobCreateNestedManyWithoutHirerInput
     jobsWorking?: JobCreateNestedManyWithoutWorkerInput
@@ -7762,7 +9008,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
     jobsCreated?: JobUncheckedCreateNestedManyWithoutHirerInput
     jobsWorking?: JobUncheckedCreateNestedManyWithoutWorkerInput
@@ -7777,7 +9023,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUpdateManyWithoutWorkerNestedInput
@@ -7792,7 +9038,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUncheckedUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUncheckedUpdateManyWithoutWorkerNestedInput
@@ -8059,7 +9305,7 @@ export namespace Prisma {
     quantity?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    owner: UserCreateNestedOneWithoutOfferingsInput
+    inventories: inventoriesCreateNestedOneWithoutOfferingsInput
   }
 
   export type OfferingUncheckedCreateInput = {
@@ -8067,7 +9313,7 @@ export namespace Prisma {
     description: string
     cost: number
     quantity?: number | null
-    userId: string
+    inventoryId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -8079,7 +9325,7 @@ export namespace Prisma {
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutOfferingsNestedInput
+    inventories?: inventoriesUpdateOneRequiredWithoutOfferingsNestedInput
   }
 
   export type OfferingUncheckedUpdateInput = {
@@ -8087,7 +9333,7 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     cost?: IntFieldUpdateOperationsInput | number
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
-    userId?: StringFieldUpdateOperationsInput | string
+    inventoryId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8097,7 +9343,7 @@ export namespace Prisma {
     description: string
     cost: number
     quantity?: number | null
-    userId: string
+    inventoryId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -8116,6 +9362,58 @@ export namespace Prisma {
     description?: StringFieldUpdateOperationsInput | string
     cost?: IntFieldUpdateOperationsInput | number
     quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    inventoryId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type inventoriesCreateInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    users: UserCreateNestedOneWithoutInventoriesInput
+    offerings?: OfferingCreateNestedManyWithoutInventoriesInput
+  }
+
+  export type inventoriesUncheckedCreateInput = {
+    id: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    offerings?: OfferingUncheckedCreateNestedManyWithoutInventoriesInput
+  }
+
+  export type inventoriesUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateOneRequiredWithoutInventoriesNestedInput
+    offerings?: OfferingUpdateManyWithoutInventoriesNestedInput
+  }
+
+  export type inventoriesUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    offerings?: OfferingUncheckedUpdateManyWithoutInventoriesNestedInput
+  }
+
+  export type inventoriesCreateManyInput = {
+    id: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type inventoriesUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type inventoriesUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8162,10 +9460,9 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type OfferingListRelationFilter = {
-    every?: OfferingWhereInput
-    some?: OfferingWhereInput
-    none?: OfferingWhereInput
+  export type InventoriesNullableScalarRelationFilter = {
+    is?: inventoriesWhereInput | null
+    isNot?: inventoriesWhereInput | null
   }
 
   export type JobApplicationListRelationFilter = {
@@ -8189,10 +9486,6 @@ export namespace Prisma {
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type OfferingOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type JobApplicationOrderByRelationAggregateInput = {
@@ -8510,12 +9803,17 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type InventoriesScalarRelationFilter = {
+    is?: inventoriesWhereInput
+    isNot?: inventoriesWhereInput
+  }
+
   export type OfferingCountOrderByAggregateInput = {
     id?: SortOrder
     description?: SortOrder
     cost?: SortOrder
     quantity?: SortOrder
-    userId?: SortOrder
+    inventoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -8530,7 +9828,7 @@ export namespace Prisma {
     description?: SortOrder
     cost?: SortOrder
     quantity?: SortOrder
-    userId?: SortOrder
+    inventoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -8540,7 +9838,7 @@ export namespace Prisma {
     description?: SortOrder
     cost?: SortOrder
     quantity?: SortOrder
-    userId?: SortOrder
+    inventoryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -8566,11 +9864,41 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
-  export type OfferingCreateNestedManyWithoutOwnerInput = {
-    create?: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput> | OfferingCreateWithoutOwnerInput[] | OfferingUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: OfferingCreateOrConnectWithoutOwnerInput | OfferingCreateOrConnectWithoutOwnerInput[]
-    createMany?: OfferingCreateManyOwnerInputEnvelope
-    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+  export type OfferingListRelationFilter = {
+    every?: OfferingWhereInput
+    some?: OfferingWhereInput
+    none?: OfferingWhereInput
+  }
+
+  export type OfferingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type inventoriesCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type inventoriesMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type inventoriesMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type inventoriesCreateNestedOneWithoutUsersInput = {
+    create?: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutUsersInput
+    connect?: inventoriesWhereUniqueInput
   }
 
   export type JobApplicationCreateNestedManyWithoutUserInput = {
@@ -8608,11 +9936,10 @@ export namespace Prisma {
     connect?: RatingWhereUniqueInput | RatingWhereUniqueInput[]
   }
 
-  export type OfferingUncheckedCreateNestedManyWithoutOwnerInput = {
-    create?: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput> | OfferingCreateWithoutOwnerInput[] | OfferingUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: OfferingCreateOrConnectWithoutOwnerInput | OfferingCreateOrConnectWithoutOwnerInput[]
-    createMany?: OfferingCreateManyOwnerInputEnvelope
-    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+  export type inventoriesUncheckedCreateNestedOneWithoutUsersInput = {
+    create?: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutUsersInput
+    connect?: inventoriesWhereUniqueInput
   }
 
   export type JobApplicationUncheckedCreateNestedManyWithoutUserInput = {
@@ -8662,18 +9989,14 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type OfferingUpdateManyWithoutOwnerNestedInput = {
-    create?: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput> | OfferingCreateWithoutOwnerInput[] | OfferingUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: OfferingCreateOrConnectWithoutOwnerInput | OfferingCreateOrConnectWithoutOwnerInput[]
-    upsert?: OfferingUpsertWithWhereUniqueWithoutOwnerInput | OfferingUpsertWithWhereUniqueWithoutOwnerInput[]
-    createMany?: OfferingCreateManyOwnerInputEnvelope
-    set?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    disconnect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    delete?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    update?: OfferingUpdateWithWhereUniqueWithoutOwnerInput | OfferingUpdateWithWhereUniqueWithoutOwnerInput[]
-    updateMany?: OfferingUpdateManyWithWhereWithoutOwnerInput | OfferingUpdateManyWithWhereWithoutOwnerInput[]
-    deleteMany?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
+  export type inventoriesUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutUsersInput
+    upsert?: inventoriesUpsertWithoutUsersInput
+    disconnect?: inventoriesWhereInput | boolean
+    delete?: inventoriesWhereInput | boolean
+    connect?: inventoriesWhereUniqueInput
+    update?: XOR<XOR<inventoriesUpdateToOneWithWhereWithoutUsersInput, inventoriesUpdateWithoutUsersInput>, inventoriesUncheckedUpdateWithoutUsersInput>
   }
 
   export type JobApplicationUpdateManyWithoutUserNestedInput = {
@@ -8746,18 +10069,14 @@ export namespace Prisma {
     deleteMany?: RatingScalarWhereInput | RatingScalarWhereInput[]
   }
 
-  export type OfferingUncheckedUpdateManyWithoutOwnerNestedInput = {
-    create?: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput> | OfferingCreateWithoutOwnerInput[] | OfferingUncheckedCreateWithoutOwnerInput[]
-    connectOrCreate?: OfferingCreateOrConnectWithoutOwnerInput | OfferingCreateOrConnectWithoutOwnerInput[]
-    upsert?: OfferingUpsertWithWhereUniqueWithoutOwnerInput | OfferingUpsertWithWhereUniqueWithoutOwnerInput[]
-    createMany?: OfferingCreateManyOwnerInputEnvelope
-    set?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    disconnect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    delete?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
-    update?: OfferingUpdateWithWhereUniqueWithoutOwnerInput | OfferingUpdateWithWhereUniqueWithoutOwnerInput[]
-    updateMany?: OfferingUpdateManyWithWhereWithoutOwnerInput | OfferingUpdateManyWithWhereWithoutOwnerInput[]
-    deleteMany?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
+  export type inventoriesUncheckedUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutUsersInput
+    upsert?: inventoriesUpsertWithoutUsersInput
+    disconnect?: inventoriesWhereInput | boolean
+    delete?: inventoriesWhereInput | boolean
+    connect?: inventoriesWhereUniqueInput
+    update?: XOR<XOR<inventoriesUpdateToOneWithWhereWithoutUsersInput, inventoriesUpdateWithoutUsersInput>, inventoriesUncheckedUpdateWithoutUsersInput>
   }
 
   export type JobApplicationUncheckedUpdateManyWithoutUserNestedInput = {
@@ -9036,10 +10355,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRatingsReceivedInput, UserUpdateWithoutRatingsReceivedInput>, UserUncheckedUpdateWithoutRatingsReceivedInput>
   }
 
-  export type UserCreateNestedOneWithoutOfferingsInput = {
-    create?: XOR<UserCreateWithoutOfferingsInput, UserUncheckedCreateWithoutOfferingsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOfferingsInput
-    connect?: UserWhereUniqueInput
+  export type inventoriesCreateNestedOneWithoutOfferingsInput = {
+    create?: XOR<inventoriesCreateWithoutOfferingsInput, inventoriesUncheckedCreateWithoutOfferingsInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutOfferingsInput
+    connect?: inventoriesWhereUniqueInput
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -9050,12 +10369,68 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutOfferingsNestedInput = {
-    create?: XOR<UserCreateWithoutOfferingsInput, UserUncheckedCreateWithoutOfferingsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutOfferingsInput
-    upsert?: UserUpsertWithoutOfferingsInput
+  export type inventoriesUpdateOneRequiredWithoutOfferingsNestedInput = {
+    create?: XOR<inventoriesCreateWithoutOfferingsInput, inventoriesUncheckedCreateWithoutOfferingsInput>
+    connectOrCreate?: inventoriesCreateOrConnectWithoutOfferingsInput
+    upsert?: inventoriesUpsertWithoutOfferingsInput
+    connect?: inventoriesWhereUniqueInput
+    update?: XOR<XOR<inventoriesUpdateToOneWithWhereWithoutOfferingsInput, inventoriesUpdateWithoutOfferingsInput>, inventoriesUncheckedUpdateWithoutOfferingsInput>
+  }
+
+  export type UserCreateNestedOneWithoutInventoriesInput = {
+    create?: XOR<UserCreateWithoutInventoriesInput, UserUncheckedCreateWithoutInventoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInventoriesInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutOfferingsInput, UserUpdateWithoutOfferingsInput>, UserUncheckedUpdateWithoutOfferingsInput>
+  }
+
+  export type OfferingCreateNestedManyWithoutInventoriesInput = {
+    create?: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput> | OfferingCreateWithoutInventoriesInput[] | OfferingUncheckedCreateWithoutInventoriesInput[]
+    connectOrCreate?: OfferingCreateOrConnectWithoutInventoriesInput | OfferingCreateOrConnectWithoutInventoriesInput[]
+    createMany?: OfferingCreateManyInventoriesInputEnvelope
+    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+  }
+
+  export type OfferingUncheckedCreateNestedManyWithoutInventoriesInput = {
+    create?: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput> | OfferingCreateWithoutInventoriesInput[] | OfferingUncheckedCreateWithoutInventoriesInput[]
+    connectOrCreate?: OfferingCreateOrConnectWithoutInventoriesInput | OfferingCreateOrConnectWithoutInventoriesInput[]
+    createMany?: OfferingCreateManyInventoriesInputEnvelope
+    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutInventoriesNestedInput = {
+    create?: XOR<UserCreateWithoutInventoriesInput, UserUncheckedCreateWithoutInventoriesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInventoriesInput
+    upsert?: UserUpsertWithoutInventoriesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInventoriesInput, UserUpdateWithoutInventoriesInput>, UserUncheckedUpdateWithoutInventoriesInput>
+  }
+
+  export type OfferingUpdateManyWithoutInventoriesNestedInput = {
+    create?: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput> | OfferingCreateWithoutInventoriesInput[] | OfferingUncheckedCreateWithoutInventoriesInput[]
+    connectOrCreate?: OfferingCreateOrConnectWithoutInventoriesInput | OfferingCreateOrConnectWithoutInventoriesInput[]
+    upsert?: OfferingUpsertWithWhereUniqueWithoutInventoriesInput | OfferingUpsertWithWhereUniqueWithoutInventoriesInput[]
+    createMany?: OfferingCreateManyInventoriesInputEnvelope
+    set?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    disconnect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    delete?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    update?: OfferingUpdateWithWhereUniqueWithoutInventoriesInput | OfferingUpdateWithWhereUniqueWithoutInventoriesInput[]
+    updateMany?: OfferingUpdateManyWithWhereWithoutInventoriesInput | OfferingUpdateManyWithWhereWithoutInventoriesInput[]
+    deleteMany?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
+  }
+
+  export type OfferingUncheckedUpdateManyWithoutInventoriesNestedInput = {
+    create?: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput> | OfferingCreateWithoutInventoriesInput[] | OfferingUncheckedCreateWithoutInventoriesInput[]
+    connectOrCreate?: OfferingCreateOrConnectWithoutInventoriesInput | OfferingCreateOrConnectWithoutInventoriesInput[]
+    upsert?: OfferingUpsertWithWhereUniqueWithoutInventoriesInput | OfferingUpsertWithWhereUniqueWithoutInventoriesInput[]
+    createMany?: OfferingCreateManyInventoriesInputEnvelope
+    set?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    disconnect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    delete?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    connect?: OfferingWhereUniqueInput | OfferingWhereUniqueInput[]
+    update?: OfferingUpdateWithWhereUniqueWithoutInventoriesInput | OfferingUpdateWithWhereUniqueWithoutInventoriesInput[]
+    updateMany?: OfferingUpdateManyWithWhereWithoutInventoriesInput | OfferingUpdateManyWithWhereWithoutInventoriesInput[]
+    deleteMany?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -9280,32 +10655,23 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type OfferingCreateWithoutOwnerInput = {
-    id?: string
-    description: string
-    cost: number
-    quantity?: number | null
+  export type inventoriesCreateWithoutUsersInput = {
+    id: string
     createdAt?: Date | string
-    updatedAt?: Date | string
+    updatedAt: Date | string
+    offerings?: OfferingCreateNestedManyWithoutInventoriesInput
   }
 
-  export type OfferingUncheckedCreateWithoutOwnerInput = {
-    id?: string
-    description: string
-    cost: number
-    quantity?: number | null
+  export type inventoriesUncheckedCreateWithoutUsersInput = {
+    id: string
     createdAt?: Date | string
-    updatedAt?: Date | string
+    updatedAt: Date | string
+    offerings?: OfferingUncheckedCreateNestedManyWithoutInventoriesInput
   }
 
-  export type OfferingCreateOrConnectWithoutOwnerInput = {
-    where: OfferingWhereUniqueInput
-    create: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput>
-  }
-
-  export type OfferingCreateManyOwnerInputEnvelope = {
-    data: OfferingCreateManyOwnerInput | OfferingCreateManyOwnerInput[]
-    skipDuplicates?: boolean
+  export type inventoriesCreateOrConnectWithoutUsersInput = {
+    where: inventoriesWhereUniqueInput
+    create: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
   }
 
   export type JobApplicationCreateWithoutUserInput = {
@@ -9470,33 +10836,29 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type OfferingUpsertWithWhereUniqueWithoutOwnerInput = {
-    where: OfferingWhereUniqueInput
-    update: XOR<OfferingUpdateWithoutOwnerInput, OfferingUncheckedUpdateWithoutOwnerInput>
-    create: XOR<OfferingCreateWithoutOwnerInput, OfferingUncheckedCreateWithoutOwnerInput>
+  export type inventoriesUpsertWithoutUsersInput = {
+    update: XOR<inventoriesUpdateWithoutUsersInput, inventoriesUncheckedUpdateWithoutUsersInput>
+    create: XOR<inventoriesCreateWithoutUsersInput, inventoriesUncheckedCreateWithoutUsersInput>
+    where?: inventoriesWhereInput
   }
 
-  export type OfferingUpdateWithWhereUniqueWithoutOwnerInput = {
-    where: OfferingWhereUniqueInput
-    data: XOR<OfferingUpdateWithoutOwnerInput, OfferingUncheckedUpdateWithoutOwnerInput>
+  export type inventoriesUpdateToOneWithWhereWithoutUsersInput = {
+    where?: inventoriesWhereInput
+    data: XOR<inventoriesUpdateWithoutUsersInput, inventoriesUncheckedUpdateWithoutUsersInput>
   }
 
-  export type OfferingUpdateManyWithWhereWithoutOwnerInput = {
-    where: OfferingScalarWhereInput
-    data: XOR<OfferingUpdateManyMutationInput, OfferingUncheckedUpdateManyWithoutOwnerInput>
+  export type inventoriesUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    offerings?: OfferingUpdateManyWithoutInventoriesNestedInput
   }
 
-  export type OfferingScalarWhereInput = {
-    AND?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
-    OR?: OfferingScalarWhereInput[]
-    NOT?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
-    id?: StringFilter<"Offering"> | string
-    description?: StringFilter<"Offering"> | string
-    cost?: IntFilter<"Offering"> | number
-    quantity?: IntNullableFilter<"Offering"> | number | null
-    userId?: StringFilter<"Offering"> | string
-    createdAt?: DateTimeFilter<"Offering"> | Date | string
-    updatedAt?: DateTimeFilter<"Offering"> | Date | string
+  export type inventoriesUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    offerings?: OfferingUncheckedUpdateManyWithoutInventoriesNestedInput
   }
 
   export type JobApplicationUpsertWithWhereUniqueWithoutUserInput = {
@@ -9649,7 +11011,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
     jobsWorking?: JobCreateNestedManyWithoutWorkerInput
     ratingsGiven?: RatingCreateNestedManyWithoutFromInput
@@ -9663,7 +11025,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
     jobsWorking?: JobUncheckedCreateNestedManyWithoutWorkerInput
     ratingsGiven?: RatingUncheckedCreateNestedManyWithoutFromInput
@@ -9682,7 +11044,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
     jobsCreated?: JobCreateNestedManyWithoutHirerInput
     ratingsGiven?: RatingCreateNestedManyWithoutFromInput
@@ -9696,7 +11058,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
     jobsCreated?: JobUncheckedCreateNestedManyWithoutHirerInput
     ratingsGiven?: RatingUncheckedCreateNestedManyWithoutFromInput
@@ -9774,7 +11136,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
     jobsWorking?: JobUpdateManyWithoutWorkerNestedInput
     ratingsGiven?: RatingUpdateManyWithoutFromNestedInput
@@ -9788,7 +11150,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
     jobsWorking?: JobUncheckedUpdateManyWithoutWorkerNestedInput
     ratingsGiven?: RatingUncheckedUpdateManyWithoutFromNestedInput
@@ -9813,7 +11175,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUpdateManyWithoutHirerNestedInput
     ratingsGiven?: RatingUpdateManyWithoutFromNestedInput
@@ -9827,7 +11189,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUncheckedUpdateManyWithoutHirerNestedInput
     ratingsGiven?: RatingUncheckedUpdateManyWithoutFromNestedInput
@@ -9890,7 +11252,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobsCreated?: JobCreateNestedManyWithoutHirerInput
     jobsWorking?: JobCreateNestedManyWithoutWorkerInput
     ratingsGiven?: RatingCreateNestedManyWithoutFromInput
@@ -9904,7 +11266,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobsCreated?: JobUncheckedCreateNestedManyWithoutHirerInput
     jobsWorking?: JobUncheckedCreateNestedManyWithoutWorkerInput
     ratingsGiven?: RatingUncheckedCreateNestedManyWithoutFromInput
@@ -9973,7 +11335,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobsCreated?: JobUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUpdateManyWithoutWorkerNestedInput
     ratingsGiven?: RatingUpdateManyWithoutFromNestedInput
@@ -9987,7 +11349,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobsCreated?: JobUncheckedUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUncheckedUpdateManyWithoutWorkerNestedInput
     ratingsGiven?: RatingUncheckedUpdateManyWithoutFromNestedInput
@@ -10001,7 +11363,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
     jobsCreated?: JobCreateNestedManyWithoutHirerInput
     jobsWorking?: JobCreateNestedManyWithoutWorkerInput
@@ -10015,7 +11377,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
     jobsCreated?: JobUncheckedCreateNestedManyWithoutHirerInput
     jobsWorking?: JobUncheckedCreateNestedManyWithoutWorkerInput
@@ -10067,7 +11429,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationCreateNestedManyWithoutUserInput
     jobsCreated?: JobCreateNestedManyWithoutHirerInput
     jobsWorking?: JobCreateNestedManyWithoutWorkerInput
@@ -10081,7 +11443,7 @@ export namespace Prisma {
     contactInfo?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    offerings?: OfferingUncheckedCreateNestedManyWithoutOwnerInput
+    inventories?: inventoriesUncheckedCreateNestedOneWithoutUsersInput
     jobApplications?: JobApplicationUncheckedCreateNestedManyWithoutUserInput
     jobsCreated?: JobUncheckedCreateNestedManyWithoutHirerInput
     jobsWorking?: JobUncheckedCreateNestedManyWithoutWorkerInput
@@ -10111,7 +11473,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUpdateManyWithoutWorkerNestedInput
@@ -10125,7 +11487,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUncheckedUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUncheckedUpdateManyWithoutWorkerNestedInput
@@ -10189,7 +11551,7 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUpdateManyWithoutWorkerNestedInput
@@ -10203,14 +11565,58 @@ export namespace Prisma {
     contactInfo?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    offerings?: OfferingUncheckedUpdateManyWithoutOwnerNestedInput
+    inventories?: inventoriesUncheckedUpdateOneWithoutUsersNestedInput
     jobApplications?: JobApplicationUncheckedUpdateManyWithoutUserNestedInput
     jobsCreated?: JobUncheckedUpdateManyWithoutHirerNestedInput
     jobsWorking?: JobUncheckedUpdateManyWithoutWorkerNestedInput
     ratingsGiven?: RatingUncheckedUpdateManyWithoutFromNestedInput
   }
 
-  export type UserCreateWithoutOfferingsInput = {
+  export type inventoriesCreateWithoutOfferingsInput = {
+    id: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+    users: UserCreateNestedOneWithoutInventoriesInput
+  }
+
+  export type inventoriesUncheckedCreateWithoutOfferingsInput = {
+    id: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt: Date | string
+  }
+
+  export type inventoriesCreateOrConnectWithoutOfferingsInput = {
+    where: inventoriesWhereUniqueInput
+    create: XOR<inventoriesCreateWithoutOfferingsInput, inventoriesUncheckedCreateWithoutOfferingsInput>
+  }
+
+  export type inventoriesUpsertWithoutOfferingsInput = {
+    update: XOR<inventoriesUpdateWithoutOfferingsInput, inventoriesUncheckedUpdateWithoutOfferingsInput>
+    create: XOR<inventoriesCreateWithoutOfferingsInput, inventoriesUncheckedCreateWithoutOfferingsInput>
+    where?: inventoriesWhereInput
+  }
+
+  export type inventoriesUpdateToOneWithWhereWithoutOfferingsInput = {
+    where?: inventoriesWhereInput
+    data: XOR<inventoriesUpdateWithoutOfferingsInput, inventoriesUncheckedUpdateWithoutOfferingsInput>
+  }
+
+  export type inventoriesUpdateWithoutOfferingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: UserUpdateOneRequiredWithoutInventoriesNestedInput
+  }
+
+  export type inventoriesUncheckedUpdateWithoutOfferingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutInventoriesInput = {
     id: string
     email: string
     name: string
@@ -10224,7 +11630,7 @@ export namespace Prisma {
     ratingsReceived?: RatingCreateNestedManyWithoutToInput
   }
 
-  export type UserUncheckedCreateWithoutOfferingsInput = {
+  export type UserUncheckedCreateWithoutInventoriesInput = {
     id: string
     email: string
     name: string
@@ -10238,23 +11644,51 @@ export namespace Prisma {
     ratingsReceived?: RatingUncheckedCreateNestedManyWithoutToInput
   }
 
-  export type UserCreateOrConnectWithoutOfferingsInput = {
+  export type UserCreateOrConnectWithoutInventoriesInput = {
     where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutOfferingsInput, UserUncheckedCreateWithoutOfferingsInput>
+    create: XOR<UserCreateWithoutInventoriesInput, UserUncheckedCreateWithoutInventoriesInput>
   }
 
-  export type UserUpsertWithoutOfferingsInput = {
-    update: XOR<UserUpdateWithoutOfferingsInput, UserUncheckedUpdateWithoutOfferingsInput>
-    create: XOR<UserCreateWithoutOfferingsInput, UserUncheckedCreateWithoutOfferingsInput>
+  export type OfferingCreateWithoutInventoriesInput = {
+    id?: string
+    description: string
+    cost: number
+    quantity?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OfferingUncheckedCreateWithoutInventoriesInput = {
+    id?: string
+    description: string
+    cost: number
+    quantity?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OfferingCreateOrConnectWithoutInventoriesInput = {
+    where: OfferingWhereUniqueInput
+    create: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput>
+  }
+
+  export type OfferingCreateManyInventoriesInputEnvelope = {
+    data: OfferingCreateManyInventoriesInput | OfferingCreateManyInventoriesInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutInventoriesInput = {
+    update: XOR<UserUpdateWithoutInventoriesInput, UserUncheckedUpdateWithoutInventoriesInput>
+    create: XOR<UserCreateWithoutInventoriesInput, UserUncheckedCreateWithoutInventoriesInput>
     where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutOfferingsInput = {
+  export type UserUpdateToOneWithWhereWithoutInventoriesInput = {
     where?: UserWhereInput
-    data: XOR<UserUpdateWithoutOfferingsInput, UserUncheckedUpdateWithoutOfferingsInput>
+    data: XOR<UserUpdateWithoutInventoriesInput, UserUncheckedUpdateWithoutInventoriesInput>
   }
 
-  export type UserUpdateWithoutOfferingsInput = {
+  export type UserUpdateWithoutInventoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -10268,7 +11702,7 @@ export namespace Prisma {
     ratingsReceived?: RatingUpdateManyWithoutToNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutOfferingsInput = {
+  export type UserUncheckedUpdateWithoutInventoriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -10282,13 +11716,33 @@ export namespace Prisma {
     ratingsReceived?: RatingUncheckedUpdateManyWithoutToNestedInput
   }
 
-  export type OfferingCreateManyOwnerInput = {
-    id?: string
-    description: string
-    cost: number
-    quantity?: number | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type OfferingUpsertWithWhereUniqueWithoutInventoriesInput = {
+    where: OfferingWhereUniqueInput
+    update: XOR<OfferingUpdateWithoutInventoriesInput, OfferingUncheckedUpdateWithoutInventoriesInput>
+    create: XOR<OfferingCreateWithoutInventoriesInput, OfferingUncheckedCreateWithoutInventoriesInput>
+  }
+
+  export type OfferingUpdateWithWhereUniqueWithoutInventoriesInput = {
+    where: OfferingWhereUniqueInput
+    data: XOR<OfferingUpdateWithoutInventoriesInput, OfferingUncheckedUpdateWithoutInventoriesInput>
+  }
+
+  export type OfferingUpdateManyWithWhereWithoutInventoriesInput = {
+    where: OfferingScalarWhereInput
+    data: XOR<OfferingUpdateManyMutationInput, OfferingUncheckedUpdateManyWithoutInventoriesInput>
+  }
+
+  export type OfferingScalarWhereInput = {
+    AND?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
+    OR?: OfferingScalarWhereInput[]
+    NOT?: OfferingScalarWhereInput | OfferingScalarWhereInput[]
+    id?: StringFilter<"Offering"> | string
+    description?: StringFilter<"Offering"> | string
+    cost?: IntFilter<"Offering"> | number
+    quantity?: IntNullableFilter<"Offering"> | number | null
+    inventoryId?: StringFilter<"Offering"> | string
+    createdAt?: DateTimeFilter<"Offering"> | Date | string
+    updatedAt?: DateTimeFilter<"Offering"> | Date | string
   }
 
   export type JobApplicationCreateManyUserInput = {
@@ -10341,33 +11795,6 @@ export namespace Prisma {
     jobId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type OfferingUpdateWithoutOwnerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    cost?: IntFieldUpdateOperationsInput | number
-    quantity?: NullableIntFieldUpdateOperationsInput | number | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type OfferingUncheckedUpdateWithoutOwnerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    cost?: IntFieldUpdateOperationsInput | number
-    quantity?: NullableIntFieldUpdateOperationsInput | number | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type OfferingUncheckedUpdateManyWithoutOwnerInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    cost?: IntFieldUpdateOperationsInput | number
-    quantity?: NullableIntFieldUpdateOperationsInput | number | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type JobApplicationUpdateWithoutUserInput = {
@@ -10598,6 +12025,42 @@ export namespace Prisma {
     type?: EnumRatingTypeFieldUpdateOperationsInput | $Enums.RatingType
     fromId?: StringFieldUpdateOperationsInput | string
     toId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OfferingCreateManyInventoriesInput = {
+    id?: string
+    description: string
+    cost: number
+    quantity?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type OfferingUpdateWithoutInventoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    cost?: IntFieldUpdateOperationsInput | number
+    quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OfferingUncheckedUpdateWithoutInventoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    cost?: IntFieldUpdateOperationsInput | number
+    quantity?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OfferingUncheckedUpdateManyWithoutInventoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    cost?: IntFieldUpdateOperationsInput | number
+    quantity?: NullableIntFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

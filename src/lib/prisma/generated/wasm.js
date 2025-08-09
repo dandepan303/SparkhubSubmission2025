@@ -166,6 +166,13 @@ exports.Prisma.OfferingScalarFieldEnum = {
   description: 'description',
   cost: 'cost',
   quantity: 'quantity',
+  inventoryId: 'inventoryId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.InventoriesScalarFieldEnum = {
+  id: 'id',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -201,7 +208,8 @@ exports.Prisma.ModelName = {
   Job: 'Job',
   JobApplication: 'JobApplication',
   Rating: 'Rating',
-  Offering: 'Offering'
+  Offering: 'Offering',
+  inventories: 'inventories'
 };
 
 /**
