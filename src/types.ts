@@ -157,7 +157,6 @@ export type RateJobArgs = {
 export type RateJobRet = {
   status: 'success' | 'error';
   message: string;
-  rating?: Rating;
 };
 
 export type SpendArgs = {

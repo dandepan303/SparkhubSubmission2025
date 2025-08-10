@@ -39,7 +39,6 @@ export default function ApplicationsPage() {
         return;
       }
 
-      console.log(res);
       setStatus({ status: 'null', message: '' });
       setJob(res.jobs[0]);
     } catch (error: any) {

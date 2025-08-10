@@ -2,34 +2,37 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma/prisma';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import { parseError } from '@/lib/util/server_util';
-import { DefaultAPIRet, RateJobArgs, RateJobRet } from '@/types';
+import { DefaultAPIRet, RateJobArgs } from '@/types';
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as Partial<RateJobArgs>;
+    const body: RateJobArgs = await request.json();
     const { jobId, value, text } = body;
 
     // Validate required fields
     if (!jobId || typeof jobId !== 'string') {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'Missing required field: jobId' }, { status: 400 });
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Missing required field: jobId' }, { status: 400 });
     }
     if (typeof value !== 'number' || !Number.isFinite(value) || value < 1 || value > 5) {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'Rating value must be a number between 1 and 5' }, { status: 400 });
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Rating value must be a number between 1 and 5' }, { status: 400 });
     }
     if (text !== undefined && (typeof text !== 'string' || text.length > 500)) {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'Rating text must be a string with maximum 500 characters' }, { status: 400 });
+      return NextResponse.json<DefaultAPIRet>(
+        { status: 'error', message: 'Rating text must be a string with maximum 500 characters' },
+        { status: 400 },
+      );
     }
 
     // Authenticate user
     const supabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const auth = request.headers.get('authorization');
+    const token = auth?.split(' ')[1];
+    const { data: authData, error: authError } = await supabase.auth.getUser(token);
+    const user = authData?.user;
 
     if (authError || !user) {
-      return NextResponse.json<RateJobRet>(
-        { status: 'error', message: await parseError(authError?.message || 'Please sign in to rate', (authError as any)?.code) },
+      return NextResponse.json<DefaultAPIRet>(
+        { status: 'error', message: await parseError(authError?.message || 'Please sign in before rating', authError.code) },
         { status: 401 },
       );
     }
@@ -47,12 +50,12 @@ export async function POST(request: Request) {
     });
 
     if (!job) {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
     }
 
     // Check if job is completed
     if (job.status !== 'COMPLETED') {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'Job must be completed before rating' }, { status: 400 });
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job must be completed before rating' }, { status: 400 });
     }
 
     // Determine user role and rating type
@@ -66,15 +69,12 @@ export async function POST(request: Request) {
     } else if (job.hirerId === user.id) {
       // User is the hirer, rating the worker
       if (!job.workerId) {
-        return NextResponse.json<RateJobRet>({ status: 'error', message: 'Job has no assigned worker to rate' }, { status: 400 });
+        return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job has no assigned worker to rate' }, { status: 400 });
       }
       ratingType = 'WORKER';
       toId = job.workerId;
     } else {
-      return NextResponse.json<RateJobRet>(
-        { status: 'error', message: 'You are not authorized to rate this job' },
-        { status: 403 },
-      );
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You are not authorized to rate this job' }, { status: 403 });
     }
 
     // Check if user has already rated this job with this rating type
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     });
 
     if (existingRating) {
-      return NextResponse.json<RateJobRet>({ status: 'error', message: 'You have already rated this job' }, { status: 409 });
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You have already rated this job' }, { status: 409 });
     }
 
     // Create the rating
@@ -125,26 +125,15 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json<RateJobRet>(
+    return NextResponse.json<DefaultAPIRet>(
       {
         status: 'success',
-        message: 'Rating submitted successfully',
-        rating: {
-          id: rating.id,
-          value: rating.value,
-          text: rating.text,
-          type: rating.type,
-          fromId: rating.fromId,
-          toId: rating.toId,
-          jobId: rating.jobId,
-          createdAt: rating.createdAt,
-          updatedAt: rating.updatedAt,
-        },
+        message: 'Successfully saved rating',
       },
       { status: 201 },
     );
   } catch (error: any) {
     console.error('api/profile/rate/route.ts POST error:', error);
-    return NextResponse.json<RateJobRet>({ status: 'error', message: await parseError(error.message, error.code) }, { status: 500 });
+    return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(error.message, error.code) }, { status: 500 });
   }
 }

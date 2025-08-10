@@ -3,9 +3,11 @@ Dean (whatever order u wanna do them):
 	▫ job-card @high
 		▫ line: 32 and 33, complete the buttons for them, functions are provided for you
 	▫ Fix nunito google font not loading in production @high
+	▫ app/rating
 
 	Remaining Tasks:
 		▫ Mobile responsive cleanup @medium
+		▫ app/rate: when error, add a button that takes back to dashboard
 		▫ job-card: when click on user -> take to profile page
 		▫ Add unclickable sidebar component to onboarding, explain what each tab does in onboarding
 		▫ Clean up create jobs offer and add sidebar/header to page
@@ -13,8 +15,9 @@ Dean (whatever order u wanna do them):
 		▫ Fix animation page change flickering @low
 
 Kevin:
-	▫ rate logic
 	▫ spend logic
+	▫ notifications logic
+	▫ advanced rate logic (ie. metrics tracking)
 
 	Functionality:
 		▫ Create job
