@@ -95,13 +95,13 @@ export async function POST(request: Request) {
       // Add notification to offering owner
       const notification = `${data.user.email} purchased ${spendQuantity} x "${offering.description}" for $${totalCost}`;
       await tx.user.update({
-        where: { id: offering.ownerId },
+        where: { id: offering.userId },
         data: {
           notifications: {
-            push: notification
+            push: notification,
           },
-          newNotifications: true
-        }
+          newNotifications: true,
+        },
       });
     });
 

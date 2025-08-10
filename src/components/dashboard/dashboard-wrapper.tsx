@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react";
-import Sidebar from "./DashboardSidebar";
+import Sidebar from './dashboard-sidebar';
 
 export default function DashboardWrapper({
     children,

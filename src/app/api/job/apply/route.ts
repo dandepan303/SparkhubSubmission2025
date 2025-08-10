@@ -19,6 +19,8 @@ export async function POST(request: Request) {
     const token = auth?.split(' ')[1];
     const { data: authData, error: authError } = await supabase.auth.getUser(token);
 
+    const user = authData?.user;
+
     if (authError || !user) {
       return NextResponse.json<DefaultAPIRet>(
         { status: 'error', message: await parseError(authError?.message || 'Please sign in to apply', (authError as any)?.code) },
@@ -26,13 +28,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // Ensure job exists and is open for applications
-    const job = await prisma.job.findUnique({ where: { id: jobId }, select: { id: true, status: true } });
+    const job = await prisma.job.findUnique({ where: { id: jobId }, select: { id: true, status: true, hirerId: true } });
     if (!job) {
       return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
     }
     if (job.status !== 'SEARCHING') {
       return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job is not accepting applications' }, { status: 400 });
+    }
+    if (job.hirerId === user.id) {
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You cannot apply to your own job' }, { status: 400 });
     }
 
     // Prevent duplicate applications

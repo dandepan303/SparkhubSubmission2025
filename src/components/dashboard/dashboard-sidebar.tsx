@@ -9,6 +9,7 @@ import {
   AiOutlineLeft,
   AiOutlineRight
 } from 'react-icons/ai';
+import Image from 'next/image';
 
 interface SidebarProps {
   isOpen: boolean; // Now a required prop, not optional
@@ -40,16 +41,16 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
     },
     {
       id: 'requests',
-      label: 'My Requests',
+      label: 'My Jobs',
       icon: AiOutlineSearch,
-      path: '/requests',
+      path: '/profile',
     },
     {
       id: 'settings',
       label: 'Settings',
       icon: AiOutlineSetting,
       path: '/profile/settings',
-    }
+    },
   ];
 
   const handleNavigation = (path: string) => {
@@ -166,7 +167,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
               {/* Avatar */}
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-sm flex-shrink-0">
                 {user?.avatar ? (
-                  <img 
+                  <Image 
                     src={user.avatar} 
                     alt={user.name || 'User'} 
                     className="h-10 w-10 rounded-full object-cover" 
@@ -239,7 +240,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
           <div className="flex items-center space-x-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-sm flex-shrink-0">
               {user?.avatar ? (
-                <img 
+                <Image 
                   src={user.avatar} 
                   alt={user.name || 'User'} 
                   className="h-8 w-8 rounded-full object-cover" 

@@ -7,6 +7,7 @@ import { privateRoutes } from '@/lib/config';
 import { Role } from '@/types';
 import { isAuthorized } from '@/lib/util/util';
 import Loading from '../ui/loading';
+import { Ewert } from 'next/font/google';
 
 interface AuthProtecterProps {
   children: React.ReactNode;
@@ -16,27 +17,27 @@ interface AuthProtecterProps {
 export default function AuthProtecter({ children, className }: AuthProtecterProps) {
   const [blockAccess, setBlockAccess] = useState<Boolean>(true);
 
-  const { profile, loading } = useAuth();
+  const { profile } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (loading) return;
+    if (profile.loading) return;
 
     async function exec() {
-      const userRole = (profile ? profile.role : 'guest') as Role;
-  
+      const userRole = (profile.data ? profile.data.role : 'guest') as Role;
+
       const requiredRole = Object.entries(privateRoutes).find(([route]) => pathname.startsWith(route))?.[1] || 'guest';
-  
+
       if (requiredRole && !isAuthorized(userRole, requiredRole)) {
-        // router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
+        router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
         return;
       }
-  
+
       setBlockAccess(false);
     }
     exec();
-  }, [loading, profile, pathname, router]);
+  }, [profile, pathname, router]);
 
   if (blockAccess) {
     return <Loading message={null} />;

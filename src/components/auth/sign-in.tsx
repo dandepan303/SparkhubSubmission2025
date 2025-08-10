@@ -22,7 +22,7 @@ interface SignInParams {
 
 export default function SignIn(params: SignInParams) {
   const router = useRouter();
-  const { loading, signIn: signInAuth, user } = useAuth();
+  const { signIn: signInAuth, user } = useAuth();
 
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading' | 'message'; message: string }>({
@@ -31,11 +31,15 @@ export default function SignIn(params: SignInParams) {
   });
 
   useEffect(() => {
-    if (!loading && user && params.message !== 'You do% not% have access to this') {
-      const newMessage = params.message || 'Already+signed+in'
-      setStatus({status: 'message', message: newMessage});
-    }
-  }, [loading, user]);
+    if (user.loading) return;
+
+    const newMessage = params.message || 'Already+signed+in';
+
+    if (user.data) router.push(`/?message=${newMessage}`);
+
+    const timeout = setTimeout(() => setStatus({ status: 'message', message: newMessage }), 1000);
+    return () => clearTimeout(timeout);
+  }, [user, params.message, router]);
 
   // Mouse tracking effect
   useEffect(() => {

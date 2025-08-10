@@ -76,7 +76,7 @@ export default function TradeSpaceLanding() {
   return (
     <div className="min-h-screen overflow-hidden bg-white">
       {/* 💡 FIX: Added `mt-20` for spacing and `z-[60]` for layering */}
-      {message && message.trim() !== '' && <FloatingMessage className="mt-20 z-[60]">{message}</FloatingMessage>}
+      {message && message.trim() !== '' && <FloatingMessage className="z-[60] mt-20">{message}</FloatingMessage>}
 
       {/* Fixed Header */}
       <header className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-b border-gray-200/20 bg-white/95 px-6 py-4 shadow-sm backdrop-blur-md md:px-12 md:py-6">
@@ -85,7 +85,7 @@ export default function TradeSpaceLanding() {
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Space</span>
         </h1>
         <div className="flex space-x-3">
-          {user ? (
+          {user.data ? (
             <button
               onClick={() => router.push('/dashboard')}
               className="rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-purple-700">

@@ -19,6 +19,7 @@ export interface User {
   offerings?: Offering[];
   ratingFrom?: Rating[];
   ratingTo?: Rating[];
+  applications?: Job[];
 }
 
 export interface Rating {
@@ -50,6 +51,7 @@ export interface Job {
   hirer?: User;
   worker?: User;
   ratings?: Rating[];
+  applications?: User[];
 }
 
 export interface Offering {
@@ -115,8 +117,8 @@ export type OfferingDeleteArgs = {
 export type JobGetRet = {
   status: 'success' | 'error';
   message: string;
-  jobs?: Job[];
-}
+  jobs?: any;
+};
 
 export type JobCreateArgs = {
   title: string;

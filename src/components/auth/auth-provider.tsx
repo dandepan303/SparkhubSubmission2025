@@ -9,12 +9,10 @@ import { config } from '@/lib/config';
 import { parseError } from '@/lib/util/server_util';
 
 interface AuthContextType {
-  user: User | null;
-  profile: AppUser | null;
-  session: Session | null;
-  loading: boolean;
+  user: { data: User | null; loading: boolean };
+  profile: { data: AppUser | null; loading: boolean };
+  session: { data: Session | null; loading: boolean };
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<AppUser>) => Promise<void>;
   getUser: () => Promise<User | null>;
@@ -36,10 +34,9 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [profile, setProfile] = useState<AppUser | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{ data: User | null; loading: boolean }>({ data: null, loading: true });
+  const [profile, setProfile] = useState<{ data: AppUser | null; loading: boolean }>({ data: null, loading: true });
+  const [session, setSession] = useState<{ data: Session | null; loading: boolean }>({ data: null, loading: true });
   const [version, setVersion] = useState<number>(0);
 
   const fetchProfile = useCallback(async (currSession: Session | null) => {
@@ -50,15 +47,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         headers: { Authorization: `Bearer ${currSession?.access_token}` },
       });
       if (res.data && res.data.user) {
-        setProfile(res.data.user);
+        setProfile({ data: res.data.user, loading: false });
       } else {
-        setProfile(null);
+        setProfile({ data: null, loading: false });
       }
     } catch (error: any) {
       console.error('Error fetching profile:', error);
-      setProfile(null);
+      setProfile({ data: null, loading: false });
     }
-    setLoading(false);
   }, []);
 
   const signIn = async (email: string, password: string) => {
@@ -73,26 +69,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        return { error };
-      }
-
-      // Profile will be created automatically by the database trigger
-      // No need to manually create profile here
-
-      return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
   };
@@ -101,14 +77,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.id).select().single();
+      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.data.id).select().single();
 
       if (error) {
         console.error('Error updating profile:', error);
         return;
       }
 
-      setProfile(data);
+      setProfile({ data: data, loading: false });
     } catch (error) {
       console.error('Error updating profile:', error);
     }
@@ -138,25 +114,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Add a timeout to prevent infinite loading
     const timeout = setTimeout(() => {
       console.warn('Auth loading timeout - setting loading to false');
-      setLoading(false);
+      setUser({ data: user.data, loading: false });
+      setProfile({ data: profile.data, loading: false });
+      setSession({ data: session.data, loading: false });
     }, 10000); // 10 second timeout
 
     // Get initial session
     supabase.auth
       .getSession()
       .then(async ({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession({ data: session, loading: false });
+        setUser({ data: session?.user ?? null, loading: false });
         if (session?.user) {
           await fetchProfile(session);
-        } else {
-          setLoading(false);
         }
         setVersion(v => v + 1); // Increment version on initial session
         clearTimeout(timeout);
       })
       .catch(error => {
-        setLoading(false);
+        setUser({ data: user.data, loading: false });
+        setProfile({ data: profile.data, loading: false });
+        setSession({ data: session.data, loading: false });
         clearTimeout(timeout);
       });
 
@@ -164,17 +142,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      setSession({ data: session, loading: false });
+      setUser({ data: session?.user ?? null, loading: false });
 
       if (event === 'SIGNED_IN' && session?.user) {
         await fetchProfile(session);
       } else if (event === 'SIGNED_OUT') {
-        setProfile(null);
+        setProfile({ data: null, loading: false });
       }
 
-      setLoading(false);
-      setVersion(v => v + 1); // Increment version on auth state change
+      setVersion(v => v + 1);
     });
 
     return () => {
@@ -187,9 +164,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user,
     profile,
     session,
-    loading,
     signIn,
-    signUp,
     signOut,
     updateProfile,
     getUser,

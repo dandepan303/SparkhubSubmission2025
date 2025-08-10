@@ -17,18 +17,18 @@ export default function Onboard() {
   const [status, setStatus] = useState<{ status: 'loading' | 'contact-info' | 'info'; message: string }>({ status: 'contact-info', message: '' });
   const [contactInfo, setContactInfo] = useState('');
 
-  const { profile, loading, session } = useAuth();
+  const { profile, session } = useAuth();
 
   // Check if contact info is set
   useEffect(() => {
-    if (!loading) {
-      if (profile && (!profile.contactInfo || profile.contactInfo.trim() === '')) {
-        setStatus({ status: 'contact-info', message: '' });
-      } else {
-        setStatus({ status: 'info', message: '' });
-      }
+    if (profile.loading && session.loading) return;
+
+    if (profile && (!profile.data.contactInfo || profile.data.contactInfo.trim() === '')) {
+      setStatus({ status: 'contact-info', message: '' });
+    } else {
+      setStatus({ status: 'info', message: '' });
     }
-  }, [profile, loading]);
+  }, [profile, session.loading]);
 
   const handleContactInfoSave = async () => {
     // Basic validation to prevent empty submissions
@@ -50,7 +50,7 @@ export default function Onboard() {
           signal: controller.signal,
           withCredentials: true,
           validateStatus: () => true,
-          headers: { Authorization: `Bearer ${session?.access_token}` },
+          headers: { Authorization: `Bearer ${session?.data.access_token}` },
         },
       );
 

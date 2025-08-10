@@ -26,18 +26,16 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            {/* Add a background class to the body element */}
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}>
-                <AuthProvider>
-                    <AuthProtecter>
-                        <script src="https://accounts.google.com/gsi/client" async defer></script>
-                        <AnimatePresenceWrapper>
-                            {children}
-                        </AnimatePresenceWrapper>
-                    </AuthProtecter>
-                </AuthProvider>
-            </body>
-        </html>
+      <html lang="en">
+        {/* Add a background class to the body element */}
+        <body className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-black antialiased`}>
+          <AuthProvider>
+            <AuthProtecter>
+              <script src="https://accounts.google.com/gsi/client" async defer></script>
+              <AnimatePresenceWrapper>{children}</AnimatePresenceWrapper>
+            </AuthProtecter>
+          </AuthProvider>
+        </body>
+      </html>
     );
 }

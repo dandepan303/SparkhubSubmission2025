@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
+import Image from 'next/image';
 
 interface HeaderProps {
   sidebarOpen?: boolean;
@@ -175,7 +176,7 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
               {/* Avatar */}
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-sm font-bold text-white shadow-md">
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="Profile" className="h-8 w-8 rounded-full object-cover" />
+                  <Image src={user.avatar} alt="Profile" className="h-8 w-8 rounded-full object-cover" />
                 ) : (
                   <span>{user?.name?.charAt(0) || 'U'}</span>
                 )}
@@ -207,7 +208,7 @@ export default function Header({ sidebarOpen = true, onSidebarToggle, user }: He
                   <div className="flex items-center space-x-3">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-lg font-bold text-white">
                       {user?.avatar ? (
-                        <img src={user.avatar} alt="Profile" className="h-12 w-12 rounded-full object-cover" />
+                        <Image src={user.avatar} alt="Profile" className="h-12 w-12 rounded-full object-cover" />
                       ) : (
                         <span>{user?.name?.charAt(0) || 'U'}</span>
                       )}

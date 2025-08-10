@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
 import prisma from '@/lib/prisma/prisma';
 import { parseError } from '@/lib/util/server_util';
-import { DefaultAPIRet, AcceptJobArgs, User, GetJobApplicantsRet } from '@/types';
+import { DefaultAPIRet, AcceptJobArgs, User, GetJobApplicantsRet, RatingType } from '@/types';
 
 export async function GET(request: Request) {
   try {
@@ -78,15 +78,7 @@ export async function GET(request: Request) {
       {
         status: 'success',
         message: '',
-        applicants: job.applications.map(applicant => ({
-          ...applicant,
-          ratingTo: applicant.ratingTo.map(rating => ({
-            ...rating,
-            type: rating.type as string,
-            createdAt: rating.createdAt.toISOString(),
-            updatedAt: rating.updatedAt.toISOString(),
-          })),
-        })),
+        applicants: job.applications,
       },
       { status: 200 },
     );

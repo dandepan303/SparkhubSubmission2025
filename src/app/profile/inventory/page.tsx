@@ -7,30 +7,29 @@ import { useEffect, useState } from 'react';
 import { IoWarning } from 'react-icons/io5';
 
 export default function InventoryPage() {
-  const searchParams = useSearchParams();
   const router = useRouter();
+
+  const searchParams = useSearchParams();
   const searchParamUserId = searchParams.get('userId');
-  const [status, setStatus] = useState<{ 
-    status: 'inventory' | 'loading' | 'error', 
-    message?: string, 
-    userId?: string 
-  }>({ status: 'loading' });
-  const { loading, profile } = useAuth();
+
+  const [status, setStatus] = useState<{ status: 'inventory' | 'loading' | 'error'; message?: string; userId?: string }>({ status: 'loading' });
+
+  const { profile } = useAuth();
 
   useEffect(() => {
-    if (!loading) {
+    if (!profile.loading) {
       if (searchParamUserId) {
         setStatus({ status: 'inventory', userId: searchParamUserId });
-      } else if (profile && profile.id) {
-        setStatus({ status: 'inventory', userId: profile.id });
+      } else if (profile && profile.data.id) {
+        setStatus({ status: 'inventory', userId: profile.data.id });
       } else {
-        setStatus({ 
-          status: 'error', 
-          message: 'Please sign in or choose another user\'s inventory to display' 
+        setStatus({
+          status: 'error',
+          message: "Please sign in or choose another user's inventory to display",
         });
       }
     }
-  }, [loading, profile, searchParamUserId]);
+  }, [profile, searchParamUserId]);
 
   if (status.status === 'loading') {
     return <Loading />;

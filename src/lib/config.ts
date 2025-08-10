@@ -38,12 +38,12 @@ export const privateRoutes: Record<string, Role> = {
 export const publicUserData = {
   name: true,
   contactInfo: true,
-  offerings: true,
-  jobApplications: true,
+  applications: true,
   jobsCreated: true,
   jobsWorking: true,
-  ratingsGiven: true,
-  ratingsReceived: true,
+  offerings: true,
+  ratingFrom: true,
+  ratingTo: true,
   createdAt: true,
   updatedAt: true,
 };

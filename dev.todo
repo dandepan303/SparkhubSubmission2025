@@ -8,10 +8,26 @@ Dean (whatever order u wanna do them):
 		idk choose a design that works
 	*/
 
+	▫ Fix nunito google font not loading in production @high
 	▫ add author name to offering component
 		▫ when click on author name take to profile page
+	▫ Update sidebar to include pages inventory, requests
+	▫ Add unclickable sidebar component to onboarding, explain what each tab does in onboarding
+	▫ Clean up create jobs offer and add sidebar/header to page
+	▫ Fix collapsed sidebar re-expanding on page change
+	▫ Help filter jobs (currently if you make a job it shows up in your dashboard feed)
+	▫ Mobile responsive cleanup @medium
+	▫ Fix animation page change flickering @low
 
 Kevin:
+	▫ accept job
+		▫ JobCard has 'view applications' button
+		▫ /applications/page?id=job_id
+			▫ list of UserCard of job.applicaition
+		▫ /components/profile/UserCard
+			▫ params: User, onHire?
+
+
 	Functionality:
 		▫ Create job
 			▫ new job, link hirer to A

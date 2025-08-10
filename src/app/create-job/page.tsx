@@ -31,11 +31,11 @@ export default function CreateJobPage() {
 			};
 
 			const { data: res }: { data: DefaultAPIRet } = await axios.post('/api/job/create', jobData, {
-				signal: controller.signal,
-				withCredentials: true,
-				validateStatus: () => true,
-				headers: { Authorization: `Bearer ${session?.access_token}` },
-			});
+        signal: controller.signal,
+        withCredentials: true,
+        validateStatus: () => true,
+        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+      });
 
 			if (res.status === 'error') {
 				setStatus({ status: 'error', message: res.message });
