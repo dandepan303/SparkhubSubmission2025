@@ -1,32 +1,20 @@
 Dean (whatever order u wanna do them):
-	▫ inventory ui & jobs ui
-	/* 
-		both of these have individual cards (ie. one offering or one job)
-		both need to be able to be editted (isOwner) - use onUpdate and onDelete for offering
-		both need to be in list format
-		both need a button for create (create offering -> createOffering() or create job -> router.push('/create-job'))
-		idk choose a design that works
-	*/
-
+	Current Task (u better finish these bf u do the other ones):
+	▫ job-card @high
+		▫ line: 32 and 33, complete the buttons for them, functions are provided for you
 	▫ Fix nunito google font not loading in production @high
-	▫ add author name to offering component
-		▫ when click on author name take to profile page
-	▫ Update sidebar to include pages inventory, requests
-	▫ Add unclickable sidebar component to onboarding, explain what each tab does in onboarding
-	▫ Clean up create jobs offer and add sidebar/header to page
-	▫ Fix collapsed sidebar re-expanding on page change
-	▫ Help filter jobs (currently if you make a job it shows up in your dashboard feed)
-	▫ Mobile responsive cleanup @medium
-	▫ Fix animation page change flickering @low
+
+	Remaining Tasks:
+		▫ Mobile responsive cleanup @medium
+		▫ job-card: when click on user -> take to profile page
+		▫ Add unclickable sidebar component to onboarding, explain what each tab does in onboarding
+		▫ Clean up create jobs offer and add sidebar/header to page
+		▫ Fix collapsed sidebar re-expanding on page change
+		▫ Fix animation page change flickering @low
 
 Kevin:
-	▫ accept job
-		▫ JobCard has 'view applications' button
-		▫ /applications/page?id=job_id
-			▫ list of UserCard of job.applicaition
-		▫ /components/profile/UserCard
-			▫ params: User, onHire?
-
+	▫ rate logic
+	▫ spend logic
 
 	Functionality:
 		▫ Create job

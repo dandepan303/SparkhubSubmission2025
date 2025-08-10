@@ -22,18 +22,18 @@ export default function ApplicationsPage() {
       setStatus({ status: 'error', message: 'This job does not exist anymore' });
       return;
     }
-    
+
     try {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60); // 60 second timeout
-      
+
       const { data: res }: { data: JobGetRet } = await axios.get(`/api/job/?id=${jobId}`, {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
       });
-      
+
       if (!res || res.jobs.length === 0) {
         setStatus({ status: 'error', message: 'There was an issue loading the job applications' });
         return;
@@ -47,7 +47,7 @@ export default function ApplicationsPage() {
       await parseError(error.message, error.code);
       setStatus({ status: 'error', message: 'There was an issue loading the inventory' });
     }
-  }, [jobId, session?.data.access_token]); // Include dependencies
+  }, [jobId, session?.data?.access_token]); // Include dependencies
 
   useEffect(() => {
     if (session.loading) return;
@@ -59,25 +59,27 @@ export default function ApplicationsPage() {
   }
 
   if (job.worker) {
-    return <div>
-      <h2>Hirer</h2>
-      <span>{job.hirer.name}</span>
-      <h2>Worker</h2>
-      <span>{job.worker.name}</span>
-    </div>
+    return (
+      <div>
+        <h2>Hirer</h2>
+        <span>{job.hirer.name}</span>
+        <h2>Worker</h2>
+        <span>{job.worker.name}</span>
+      </div>
+    );
   }
 
   if (!job || !job.applications || job.applications.length === 0) {
-    return <span>There are no applications for this job. This job </span>
+    return <span>There are no applications for this job. This job </span>;
   }
 
   if (job?.applications && job.applications.length > 0) {
     return (
-    <div>    
-        job.applications.map((user, index) => (
+      <div>
+        {job.applications.map((user, index) => (
           <UserCard key={user.id || index} user={user} jobId={job.id} setStatus={setStatus}></UserCard>
-        ))
-    </div>
-  )
+        ))}
+      </div>
+    );
   }
 }

@@ -60,13 +60,12 @@ const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user
         jobId: jobId,
         workerId: user.id
       }
-      const {
-        data: res }: { data: DefaultAPIRet } = await axios.post(`/api/job/accept`, acceptData, {
-          signal: controller.signal,
-          withCredentials: true,
-          validateStatus: () => true,
-          headers: { Authorization: `Bearer ${session?.data.access_token}` },
-        });
+      const { data: res }: { data: DefaultAPIRet } = await axios.post(`/api/job/accept`, acceptData, {
+        signal: controller.signal,
+        withCredentials: true,
+        validateStatus: () => true,
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
+      });
 
       if (res.status === 'success') {
         setIsAccepted(true);

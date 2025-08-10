@@ -50,7 +50,7 @@ export default function Onboard() {
           signal: controller.signal,
           withCredentials: true,
           validateStatus: () => true,
-          headers: { Authorization: `Bearer ${session?.data.access_token}` },
+          headers: { Authorization: `Bearer ${session?.data?.access_token}` },
         },
       );
 

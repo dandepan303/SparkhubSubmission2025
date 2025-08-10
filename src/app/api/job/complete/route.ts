@@ -7,8 +7,8 @@ import { DefaultAPIRet, CompleteJobArgs } from '@/types';
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as Partial<CompleteJobArgs>;
-    const { jobId } = body;
+    const body: CompleteJobArgs = await request.json();
+    const jobId = body.jobId;
 
     // Validate required fields
     if (!jobId || typeof jobId !== 'string') {
@@ -17,10 +17,10 @@ export async function POST(request: Request) {
 
     // Authenticate user
     const supabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const auth = request.headers.get('authorization');
+    const token = auth?.split(' ')[1];
+    const { data: authData, error: authError } = await supabase.auth.getUser(token);
+    const user = authData?.user;
 
     if (authError || !user) {
       return NextResponse.json<DefaultAPIRet>(
@@ -45,18 +45,18 @@ export async function POST(request: Request) {
 
     // Check if job belongs to the current user (hirer)
     if (job.hirerId !== user.id) {
-      return NextResponse.json<DefaultAPIRet>(
-        { status: 'error', message: 'You are not authorized to complete this job' },
-        { status: 403 },
-      );
+      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You are not authorized to complete this job' }, { status: 403 });
     }
 
     // Check if job is in progress (can only complete jobs that are in progress)
     if (job.status !== 'IN_PROGRESS') {
-      return NextResponse.json<DefaultAPIRet>({ 
-        status: 'error', 
-        message: job.status === 'COMPLETED' ? 'Job is already completed' : 'Job must be in progress to be completed' 
-      }, { status: 400 });
+      return NextResponse.json<DefaultAPIRet>(
+        {
+          status: 'error',
+          message: job.status === 'COMPLETED' ? 'Job is already completed' : 'Job must be in progress to be completed',
+        },
+        { status: 400 },
+      );
     }
 
     // Ensure job has a worker assigned
@@ -79,14 +79,14 @@ export async function POST(request: Request) {
         where: { id: job.worker!.id },
         data: {
           notifications: {
-            push: `Job completed: ${job.title}. You can now receive ratings and the hirer can spend your offerings!`,
+            push: `Job completed: ${job.title}. You can now fill out ratings and the hirer can spend your offerings!`,
           },
           newNotifications: true,
         },
       });
     });
 
-    return NextResponse.json<DefaultAPIRet>({ status: 'success', message: 'Job completed successfully' }, { status: 200 });
+    return NextResponse.json<DefaultAPIRet>({ status: 'success', message: 'Successfully marked job as complete' }, { status: 200 });
   } catch (error: any) {
     console.error('api/job/complete/route.ts POST error:', error);
     return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(error.message, error.code) }, { status: 500 });

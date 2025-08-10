@@ -34,7 +34,7 @@ export default function CreateJobPage() {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
       });
 
 			if (res.status === 'error') {
@@ -47,7 +47,7 @@ export default function CreateJobPage() {
 				}, 1500);
 			}
 		} catch (error: any) {
-			console.error('/create-job createJob error');
+			console.log('/create-job createJob error');
 			await parseError(error.message, error.code);
 
 			setStatus({ status: 'error', message: 'There was an issue creating the job' });

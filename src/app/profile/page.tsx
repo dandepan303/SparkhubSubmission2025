@@ -31,21 +31,23 @@ export default function Profile() {
     setApplications(profile.data.applications || []);
   }, [profile, router]);
 
+  console.log('profile', status);
+
   return (
     <div className="text-black">
       {status.message && status.message.trim() !== '' && <FloatingMessage>{status.message}</FloatingMessage>}
 
       <h2>Hiring</h2>
       {jobsCreated.length === 0 && <span>You are not hiring any jobs</span>}
-      {jobsCreated.length > 0 && <JobsList setStatus={setStatus} providedJobs={jobsCreated}></JobsList>}
+      {jobsCreated.length > 0 && <JobsList setStatus={setStatus} providedJobs={jobsCreated} showApplyNowParam={false}></JobsList>}
 
       <h2>Working</h2>
       {jobsWorking.length === 0 && <span>You are not working any jobs</span>}
-      {jobsWorking.length > 0 && <JobsList setStatus={setStatus} providedJobs={jobsWorking}></JobsList>}
+      {jobsWorking.length > 0 && <JobsList setStatus={setStatus} providedJobs={jobsWorking} showApplyNowParam={false}></JobsList>}
 
       <h2>Applications</h2>
       {applications.length === 0 && <span>You are not applied to any jobs</span>}
-      {applications.length > 0 && <JobsList setStatus={setStatus} providedJobs={applications}></JobsList>}
+      {applications.length > 0 && <JobsList setStatus={setStatus} providedJobs={applications} showApplyNowParam={false}></JobsList>}
     </div>
   );
 }

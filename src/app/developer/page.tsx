@@ -30,7 +30,7 @@ export default function DeveloperPage() {
       .delete(`/api/developer`, {
         data: { ...opts },
         withCredentials: true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
         signal: controller.signal,
       })
       .then(res => {

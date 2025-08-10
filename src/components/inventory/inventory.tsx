@@ -45,7 +45,7 @@ export default function Inventory({ userId }: { userId: string }) {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
       });
 
       if (!user) {
@@ -61,7 +61,7 @@ export default function Inventory({ userId }: { userId: string }) {
 
       setStatus({ status: 'error', message: 'There was an issue loading the inventory' });
     }
-  }, [userId, session?.data.access_token]);
+  }, [userId, session?.data?.access_token]);
 
   const upsertOffering = async (offeringData: OfferingPostArgs) => {
     try {
@@ -72,7 +72,7 @@ export default function Inventory({ userId }: { userId: string }) {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
       });
 
       if (res.status === 'error') {
@@ -100,7 +100,7 @@ export default function Inventory({ userId }: { userId: string }) {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
-        headers: { Authorization: `Bearer ${session?.data.access_token}` },
+        headers: { Authorization: `Bearer ${session?.data?.access_token}` },
         data: { offeringId },
       });
 

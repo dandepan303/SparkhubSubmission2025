@@ -139,7 +139,7 @@ export default function SignUp() {
         const { data: res }: { data: DefaultAPIRet } = await axios.post(`/api/signup/google`, reqBody, {
           signal: controller.signal,
           withCredentials: true,
-          headers: { Authorization: `Bearer ${session?.data.access_token}` },
+          headers: { Authorization: `Bearer ${session?.data?.access_token}` },
           validateStatus: () => true,
         });
 
@@ -153,7 +153,7 @@ export default function SignUp() {
         setStatus({ status: 'error', message: 'There was an issue with Google. Please try again.' });
       }
     },
-    [session?.data.access_token],
+    [session?.data?.access_token],
   );
 
   if (status.status === 'page-loading') {
