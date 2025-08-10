@@ -2,21 +2,28 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Offering, OfferingPostArgs, User } from '@/types';
 import { useEffect, useState } from 'react';
 import { MdAttachMoney, MdInventory, MdCalendarToday } from 'react-icons/md';
+import { useAuth } from '../auth/auth-provider';
 
 interface OfferingCardArgs {
   offering: Offering;
-  profile: User | null;
   onUpdate: (newOffering: OfferingPostArgs) => void;
   onDelete: (offeringId: string) => void;
+  onSpend: (offeringId: string) => void;
 }
 
-export default function OfferingCard({ offering, profile, onUpdate, onDelete }: OfferingCardArgs) {
-  const [isOwner, setIsOwner] = useState<Boolean>(false);
+export default function OfferingCard({ offering, onUpdate, onDelete, onSpend }: OfferingCardArgs) {
+  const { user, profile } = useAuth();
 
-  useEffect(() => { 
-    setIsOwner(profile && profile.id === offering.id);
-  }, [profile, offering])
-  
+  const [userRole, setUserRole] = useState<'owner' | 'spender' | 'standard'>('standard');
+
+  useEffect(() => {
+    if (user.loading || profile.loading) return;
+
+    if (user.data.id === offering.userId) setUserRole('owner');
+    else if (profile.data.jobsWorking.some(job => job.hirerId === offering.userId && job.status === 'COMPLETED' && job.payment > 0))
+      setUserRole('spender');
+  }, [profile, offering]);
+
   // Format the date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -25,27 +32,6 @@ export default function OfferingCard({ offering, profile, onUpdate, onDelete }: 
       day: 'numeric',
     });
   };
-
-  // TODO: REMOVE DEV - UPDATE TESTING
-  // useEffect(() => {
-  //   // Testing on update
-  //   const newDescription = 'new description, temp';
-  //   const newCost = 5;
-  //   const newQuantity = 5;
-
-  //   const newOffering: OfferingPostArgs = {
-  //     offeringId: offering.id,
-  //     description: newDescription || offering.description,
-  //     cost: newCost || offering.cost,
-  //     quantity: newQuantity || offering.quantity,
-  //   };
-  //   onUpdate(newOffering);
-  // }, [offering])
-  
-  // TODO: REMOVE DEV - DELETE TESTING
-  // useEffect(() => {
-  //   onDelete(offering.id);
-  // })
 
   return (
     <Card className="w-full max-w-sm transition-shadow duration-200 hover:shadow-lg">
@@ -75,7 +61,8 @@ export default function OfferingCard({ offering, profile, onUpdate, onDelete }: 
           <span className="text-xs text-gray-500">Updated: {formatDate(offering.updatedAt.toString())}</span>
         </div>
 
-        {isOwner && <div>todo: edit button for changing these values - line 57</div>}
+        {userRole === 'owner' && <div>todo: edit button for changing & deleting these values - line 64</div>}
+        {userRole === 'spender' && <button onClick={() => onSpend(offering.id)}>Exchange one</button>}
       </CardContent>
 
       <CardFooter className="flex items-center justify-between pt-2">

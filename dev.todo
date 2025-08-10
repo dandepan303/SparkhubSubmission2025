@@ -1,9 +1,12 @@
 Dean (whatever order u wanna do them):
-	Current Task (u better finish these bf u do the other ones):
+	Current Task (lock inn u got this):
 	▫ job-card @high
 		▫ line: 32 and 33, complete the buttons for them, functions are provided for you
 	▫ Fix nunito google font not loading in production @high
-	▫ app/rating
+	▫ app/rating @high
+	▫ components/inventory/offering userRole front end
+		▫ onDelete, onSpend @high
+		▫ onUpdate @low
 
 	Remaining Tasks:
 		▫ Mobile responsive cleanup @medium
@@ -15,7 +18,8 @@ Dean (whatever order u wanna do them):
 		▫ Fix animation page change flickering @low
 
 Kevin:
-	▫ spend logic
+	▫ component/inventory spendOffering api call
+		▫ first understand route, then write api call
 	▫ notifications logic
 	▫ advanced rate logic (ie. metrics tracking)
 

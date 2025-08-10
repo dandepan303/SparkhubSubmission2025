@@ -118,6 +118,10 @@ export default function Inventory({ userId }: { userId: string }) {
     }
   };
 
+  const spendOffering = async (offeringId: string) => {
+    // todo
+  }
+
   const handleCreateOffering = (e: React.FormEvent) => {
     e.preventDefault();
     if (newOffering.description.trim()) {
@@ -281,7 +285,7 @@ export default function Inventory({ userId }: { userId: string }) {
                   {/* Hover glow effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
 
-                  <OfferingCard offering={offering} profile={profile.data} onUpdate={upsertOffering} onDelete={deleteOffering} />
+                  <OfferingCard offering={offering} onUpdate={upsertOffering} onDelete={deleteOffering} onSpend={spendOffering}/>
                 </div>
               ))}
             </div>
