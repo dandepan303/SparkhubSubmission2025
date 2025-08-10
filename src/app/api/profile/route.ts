@@ -16,7 +16,6 @@ export async function GET(request: Request) {
     const auth = request.headers.get('authorization');
     const token = auth?.split(' ')[1];
     const { data, error } = await supabase.auth.getUser(token);
-    if (error) return NextResponse.json({ status: 'error', message: await parseError(error.message, error.code) }, { status: 401 });
 
     // fetching db data
     const user = await prisma.user.findUnique({

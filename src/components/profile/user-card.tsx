@@ -3,7 +3,7 @@
 import { AcceptJobArgs, User, DefaultAPIRet } from "@/types";
 import { useAuth } from '@/components/auth/auth-provider';
 import axios from "axios";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { parseError } from "@/lib/util/server_util";
 
 type StatProps = { label: string; value: string | number, icon: string, color: string };
@@ -17,12 +17,13 @@ function Stat({ label, value, icon, color }: StatProps) {
   );
 }
 
-export default function UserCard({ user, jobId, setStatus }: { user: User, jobId: string, setStatus: any }) {
+const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user: User, jobId: string, setStatus: any }) {
   const { session, user: authUser } = useAuth();
   
   const [isOwner, setIsOwner] = useState<boolean>(false);
-  
   const [isHovered, setIsHovered] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
   
   const initials = (user.name || "?")
     .split(" ")
@@ -48,6 +49,9 @@ export default function UserCard({ user, jobId, setStatus }: { user: User, jobId
   const updatedDate = user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : "-";
 
   const onAccept = async () => {
+    setIsAccepting(true);
+    setStatus({ status: 'loading', message: 'Accepting worker...' });
+
     try {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60); // 60 second timeout
@@ -64,17 +68,18 @@ export default function UserCard({ user, jobId, setStatus }: { user: User, jobId
           headers: { Authorization: `Bearer ${session?.data.access_token}` },
         });
 
-      if (!user) {
-        setStatus({ status: 'error', message: 'There was an issue loading the inventory' });
-        return [];
+      if (res.status === 'success') {
+        setIsAccepted(true);
+        setStatus({ status: 'success', message: 'Worker accepted successfully!' });
+      } else {
+        setStatus({ status: 'error', message: res.message || 'Failed to accept worker' });
       }
-
-      setStatus({ status: 'null', message: '' });
     } catch (error: any) {
-      console.error('/component/inventory fetch_offering error');
+      console.error('/component/usercard accept_worker error', error);
       await parseError(error.message, error.code);
-
       setStatus({ status: 'error', message: 'There was an issue accepting the worker' });
+    } finally {
+      setIsAccepting(false);
     }
   }
 
@@ -105,7 +110,6 @@ export default function UserCard({ user, jobId, setStatus }: { user: User, jobId
 
   useEffect(() => {
     if (authUser.loading || !authUser.data) return;
-
     setIsOwner(authUser.data.id === user.id);
   }, [authUser.data, authUser.loading, setIsOwner]);
 
@@ -165,6 +169,49 @@ export default function UserCard({ user, jobId, setStatus }: { user: User, jobId
                 </div>
               )}
             </div>
+
+            {/* Accept Button */}
+            {!isOwner && (
+              <div className="flex-shrink-0">
+                <button
+                  onClick={onAccept}
+                  disabled={isAccepting || isAccepted}
+                  className={`
+                    relative overflow-hidden rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60
+                    ${isAccepted 
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 focus:ring-green-500' 
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:ring-blue-500'
+                    }
+                  `}
+                >
+                  {/* Loading spinner */}
+                  {isAccepting && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                    </div>
+                  )}
+                  
+                  {/* Button content */}
+                  <span className={`flex items-center gap-2 ${isAccepting ? 'opacity-0' : 'opacity-100'}`}>
+                    {isAccepted ? (
+                      <>
+                        <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Accepted
+                      </>
+                    ) : (
+                      <>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        Accept
+                      </>
+                    )}
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -236,4 +283,6 @@ export default function UserCard({ user, jobId, setStatus }: { user: User, jobId
       </div>
     </div>
   );
-}
+})
+
+export default UserCard;

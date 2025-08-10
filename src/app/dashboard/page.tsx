@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/dashboard/dashboard-sidebar';
 import Header from '@/components/dashboard/dashboard-header';
@@ -16,12 +16,20 @@ export default function Dashboard() {
   });
   const { user } = useAuth();
 
+  const userName = useMemo(() => {
+      return user?.data?.user_metadata?.name || user?.data?.email?.split("@")[0] || "User";
+  }, [user?.data?.user_metadata?.name, user?.data?.email]);
+
+  const userEmail = useMemo(() => {
+      return user?.data?.email || "no email set";
+  }, [user?.data?.email]);
+
   useEffect(() => {
     if (user.loading) return;
 
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeMessage');
     if (!hasSeenWelcome) {
-      setStatus({ status: 'message', message: `Welcome back, ${user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || ''}! 🎉` });
+      setStatus({ status: 'message', message: `Welcome back, ${userName}! 🎉` });
       localStorage.setItem('hasSeenWelcomeMessage', 'true');
     } else {
       setStatus({ status: 'null', message: '' });
@@ -41,7 +49,7 @@ export default function Dashboard() {
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          name: userEmail,
           email: user?.data?.email || 'no email set',
         }}
       />
@@ -51,7 +59,7 @@ export default function Dashboard() {
         sidebarOpen={sidebarOpen}
         onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          name: userEmail,
           email: user?.data?.email || 'no email set',
         }}
       />
@@ -61,7 +69,7 @@ export default function Dashboard() {
         {status.message && status.message.trim() !== '' && (
           <div className="pointer-events-auto flex justify-center pt-4">
             <FloatingMessage type="success">
-              Welcome back, {user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User'}! 🎉
+              Welcome back, {userEmail}! 🎉
             </FloatingMessage>
           </div>
         )}

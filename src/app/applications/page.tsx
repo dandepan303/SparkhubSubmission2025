@@ -58,16 +58,26 @@ export default function ApplicationsPage() {
     return <Loading></Loading>;
   }
 
-  return (
-    <div>
-      {(!job || !job.applications || job.applications.length === 0) && (
-        <span>There are no applications for this job</span>
-      )}
-      {job?.applications && job.applications.length > 0 && 
+  if (job.worker) {
+    return <div>
+      <h2>Hirer</h2>
+      <span>{job.hirer.name}</span>
+      <h2>Worker</h2>
+      <span>{job.worker.name}</span>
+    </div>
+  }
+
+  if (!job || !job.applications || job.applications.length === 0) {
+    return <span>There are no applications for this job. This job </span>
+  }
+
+  if (job?.applications && job.applications.length > 0) {
+    return (
+    <div>    
         job.applications.map((user, index) => (
           <UserCard key={user.id || index} user={user} jobId={job.id} setStatus={setStatus}></UserCard>
         ))
-      }
     </div>
   )
+  }
 }

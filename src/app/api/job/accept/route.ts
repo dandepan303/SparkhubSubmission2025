@@ -102,11 +102,11 @@ export async function POST(request: Request) {
     }
 
     // Authenticate user
-    const supabase = await createServerSupabaseClient();
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+        const supabase = await createServerSupabaseClient();
+    const auth = request.headers.get('authorization');
+    const token = auth?.split(' ')[1];
+    const { data, error: authError } = await supabase.auth.getUser(token);
+    const user = data?.user;
 
     if (authError || !user) {
       return NextResponse.json<DefaultAPIRet>(

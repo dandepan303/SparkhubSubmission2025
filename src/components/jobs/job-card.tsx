@@ -3,10 +3,10 @@
 import { DefaultAPIRet, Job } from '@/types';
 import axios from 'axios';
 import { useAuth } from '@/components/auth/auth-provider';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }) {
+const JobCard = React.memo(function JobCard({ job, setStatus }: { job: Job; setStatus: any }) {
   const router = useRouter();
 
   const [isApplying, setIsApplying] = useState(false);
@@ -313,4 +313,6 @@ export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }
       </div>
     </div>
   );
-}
+})
+
+export default JobCard;
