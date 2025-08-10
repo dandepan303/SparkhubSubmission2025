@@ -61,8 +61,8 @@ export default function Settings() {
       ...prev,
       profile: {
         ...prev.profile,
-        name: user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || '',
-        email: user?.data.email || '',
+        name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || '',
+        email: user?.data?.email || '',
       },
     }));
   }, [user, router]);
@@ -361,8 +361,8 @@ export default function Settings() {
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || 'User',
-          email: user?.data.email || 'user@example.com',
+          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          email: user?.data?.email || 'user@example.com',
         }}
       />
 
@@ -371,8 +371,8 @@ export default function Settings() {
         sidebarOpen={sidebarOpen}
         onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || 'User',
-          email: user?.data.email || 'user@example.com',
+          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          email: user?.data?.email || 'user@example.com',
         }}
       />
 

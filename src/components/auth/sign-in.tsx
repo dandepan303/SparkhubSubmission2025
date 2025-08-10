@@ -35,10 +35,7 @@ export default function SignIn(params: SignInParams) {
 
     const newMessage = params.message || 'Already+signed+in';
 
-    if (user.data) router.push(`/?message=${newMessage}`);
-
-    const timeout = setTimeout(() => setStatus({ status: 'message', message: newMessage }), 1000);
-    return () => clearTimeout(timeout);
+    setStatus({ status: 'message', message: newMessage })
   }, [user, params.message, router]);
 
   // Mouse tracking effect
@@ -221,7 +218,7 @@ export default function SignIn(params: SignInParams) {
           </div>
 
           {/* Messages */}
-          {params.message && <FloatingMessage>{params.message}</FloatingMessage>}
+          {params.message && <FloatingMessage className='mb-3'>{params.message}</FloatingMessage>}
 
           {status.status === 'success' && (
             <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-4">

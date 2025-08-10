@@ -10,7 +10,8 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function ApplicationsPage() {
   const searchParams = useSearchParams();
-  const jobId = searchParams.get('jobId');
+  const jobId = searchParams.get('id');
+
   const { session } = useAuth();
   const [status, setStatus] = useState<{ status: 'success' | 'error' | 'null' | 'loading' | 'page-loading', message: string }>({ status: 'page-loading', message: ''});
   const [job, setJob] = useState<Job | null>(null);
@@ -26,20 +27,21 @@ export default function ApplicationsPage() {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60); // 60 second timeout
       
-      const { data: res }: { data: JobGetRet } = await axios.get(`/api/profile/?id=${jobId}`, {
+      const { data: res }: { data: JobGetRet } = await axios.get(`/api/job/?id=${jobId}`, {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
         headers: { Authorization: `Bearer ${session?.data.access_token}` },
       });
       
-      if (!res) {
+      if (!res || res.jobs.length === 0) {
         setStatus({ status: 'error', message: 'There was an issue loading the job applications' });
         return;
       }
-      
+
+      console.log(res);
       setStatus({ status: 'null', message: '' });
-      setJob(res.jobs);
+      setJob(res.jobs[0]);
     } catch (error: any) {
       console.error('/component/inventory fetch_offering error');
       await parseError(error.message, error.code);
@@ -63,7 +65,7 @@ export default function ApplicationsPage() {
       )}
       {job?.applications && job.applications.length > 0 && 
         job.applications.map((user, index) => (
-          <UserCard key={user.id || index} user={user}></UserCard>
+          <UserCard key={user.id || index} user={user} jobId={job.id} setStatus={setStatus}></UserCard>
         ))
       }
     </div>

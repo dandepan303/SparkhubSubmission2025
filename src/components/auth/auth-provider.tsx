@@ -19,6 +19,8 @@ interface AuthContextType {
   version: number;
 }
 
+const log: boolean = false;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
@@ -40,19 +42,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [version, setVersion] = useState<number>(0);
 
   const fetchProfile = useCallback(async (currSession: Session | null) => {
+    if (log) console.log('fetchProfile called with session:', !!currSession);
+    
+    // Handle null session case - important for unauthenticated users
+    if (!currSession?.user?.id) {
+      console.log('No session or user, setting profile to null');
+      setProfile({ data: null, loading: false });
+      return;
+    }
+    
     try {
       const res = await axios.get(`/api/profile/?id=${currSession.user.id}`, {
         validateStatus: () => true,
         withCredentials: true,
         headers: { Authorization: `Bearer ${currSession?.access_token}` },
       });
+      
       if (res.data && res.data.user) {
+        if (log) console.log('Profile fetched successfully');
         setProfile({ data: res.data.user, loading: false });
       } else {
+        if (log) console.log('No profile data returned');
         setProfile({ data: null, loading: false });
       }
     } catch (error: any) {
-      console.error('Error fetching profile:', error);
+      console.log('Error fetching profile:', error);
       setProfile({ data: null, loading: false });
     }
   }, []);
@@ -74,19 +88,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const updateProfile = async (updates: Partial<AppUser>) => {
-    if (!user) return;
+    if (!user.data) return;
 
     try {
-      const { data, error } = await supabase.from('profiles').update(updates).eq('id', user.data.id).select().single();
+      const { data, error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.data.id)
+        .select()
+        .single();
 
       if (error) {
-        console.error('Error updating profile:', error);
+        console.log('Error updating profile:', error);
         return;
       }
 
       setProfile({ data: data, loading: false });
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.log('Error updating profile:', error);
     }
   };
 
@@ -96,45 +115,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
         data: { user },
         error,
       } = await supabase.auth.getUser();
+      
       if (error) {
         console.log('/components/auth-provider get_user error');
-
         parseError(error.message, error.code);
         return null;
       }
+      
       return user;
-    } catch (error) {
+    } catch (error: any) {
       console.error('/components/auth-provider get_user error');
-      parseError(error.message, error.code);
+      parseError(error?.message, error?.code);
       return null;
     }
   };
 
   useEffect(() => {
+    if (log) console.log('Auth provider initializing...');
+    
     // Add a timeout to prevent infinite loading
     const timeout = setTimeout(() => {
-      console.warn('Auth loading timeout - setting loading to false');
-      setUser({ data: user.data, loading: false });
-      setProfile({ data: profile.data, loading: false });
-      setSession({ data: session.data, loading: false });
+      console.warn('Auth loading timeout - forcing loading states to false');
+      setUser(prev => ({ data: prev.data, loading: false }));
+      setProfile(prev => ({ data: prev.data, loading: false }));
+      setSession(prev => ({ data: prev.data, loading: false }));
     }, 10000); // 10 second timeout
 
     // Get initial session
     supabase.auth
       .getSession()
       .then(async ({ data: { session } }) => {
+        if (log) console.log('Initial session loaded:', !!session);
+        
         setSession({ data: session, loading: false });
         setUser({ data: session?.user ?? null, loading: false });
-        if (session?.user) {
-          await fetchProfile(session);
-        }
-        setVersion(v => v + 1); // Increment version on initial session
+        
+        // Always call fetchProfile - it will handle null session appropriately
+        await fetchProfile(session);
+        
+        setVersion(v => v + 1);
         clearTimeout(timeout);
       })
       .catch(error => {
-        setUser({ data: user.data, loading: false });
-        setProfile({ data: profile.data, loading: false });
-        setSession({ data: session.data, loading: false });
+        console.log('Error getting initial session:', error);
+        setUser({ data: null, loading: false });
+        setProfile({ data: null, loading: false });
+        setSession({ data: null, loading: false });
         clearTimeout(timeout);
       });
 
@@ -142,6 +168,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (log) console.log('Auth state changed:', event, !!session);
+      
       setSession({ data: session, loading: false });
       setUser({ data: session?.user ?? null, loading: false });
 
@@ -149,16 +177,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await fetchProfile(session);
       } else if (event === 'SIGNED_OUT') {
         setProfile({ data: null, loading: false });
+      } else {
+        // Handle other events where session might be null
+        await fetchProfile(session);
       }
 
       setVersion(v => v + 1);
     });
 
     return () => {
+      if (log) console.log('Auth provider cleaning up...');
       subscription.unsubscribe();
       clearTimeout(timeout);
     };
   }, [fetchProfile]);
+
+  // Debug logging
+  useEffect(() => {
+   if (log)  console.log('Auth state:', {
+      user: { data: !!user.data, loading: user.loading },
+      profile: { data: !!profile.data, loading: profile.loading },
+      session: { data: !!session.data, loading: session.loading },
+      version
+    });
+  }, [user, profile, session, version]);
 
   const value = {
     user,

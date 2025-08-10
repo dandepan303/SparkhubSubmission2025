@@ -38,7 +38,6 @@ export const privateRoutes: Record<string, Role> = {
 export const publicUserData = {
   name: true,
   contactInfo: true,
-  applications: true,
   jobsCreated: true,
   jobsWorking: true,
   offerings: true,

@@ -4,10 +4,14 @@ import { DefaultAPIRet, Job } from '@/types';
 import axios from 'axios';
 import { useAuth } from '@/components/auth/auth-provider';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }) {
+  const router = useRouter();
+
   const [isApplying, setIsApplying] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   const { session, user } = useAuth();
 
@@ -18,8 +22,15 @@ export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }
     if (session.loading || user.loading) return;
 
     setShowApplyNow(job.status === 'SEARCHING' && job.hirerId !== user.data.id);
-    setShowViewApplications(job.hirer.id === user.data.id);
+    setShowViewApplications(job.hirerId === user.data.id);
   }, [session.loading, user.loading, user.data.id, job.hirer.id, job.hirerId, job.status]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) / rect.width;
+    const y = (e.clientY - rect.top - rect.height / 2) / rect.height;
+    setMousePosition({ x, y });
+  };
 
   const apply = async () => {
     setIsApplying(true);
@@ -50,18 +61,43 @@ export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusConfig = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'open':
-        return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white';
+      case 'searching':
+        return {
+          color: 'from-green-500 to-emerald-600',
+          textColor: 'text-green-700',
+          bgColor: 'from-green-100 to-emerald-100',
+          icon: '🔍'
+        };
       case 'in_progress':
-        return 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white';
+        return {
+          color: 'from-blue-500 to-indigo-600',
+          textColor: 'text-blue-700',
+          bgColor: 'from-blue-100 to-indigo-100',
+          icon: '⚡'
+        };
       case 'completed':
-        return 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white';
+        return {
+          color: 'from-purple-500 to-violet-600',
+          textColor: 'text-purple-700',
+          bgColor: 'from-purple-100 to-violet-100',
+          icon: '✨'
+        };
       case 'closed':
-        return 'bg-gradient-to-r from-gray-500 to-slate-500 text-white';
+        return {
+          color: 'from-gray-500 to-gray-600',
+          textColor: 'text-gray-700',
+          bgColor: 'from-gray-100 to-gray-200',
+          icon: '🔒'
+        };
       default:
-        return 'bg-gradient-to-r from-blue-500 to-purple-500 text-white';
+        return {
+          color: 'from-blue-500 to-indigo-600',
+          textColor: 'text-blue-700',
+          bgColor: 'from-blue-100 to-indigo-100',
+          icon: '💼'
+        };
     }
   };
 
@@ -69,206 +105,212 @@ export default function JobCard({ job, setStatus }: { job: Job; setStatus: any }
     return status.replace('_', ' ').toUpperCase();
   };
 
+  const statusConfig = getStatusConfig(job.status);
+
   return (
     <div
-      className="group relative mb-6 overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-lg transition-all duration-300 hover:scale-[1.01] hover:shadow-xl"
+      className="group relative bg-white/80 backdrop-blur-sm rounded-3xl border border-white/20 shadow-xl transition-all duration-500 hover:shadow-2xl hover:bg-white/90 overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onMouseMove={handleMouseMove}
       style={{
-        background: isHovered ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' : 'linear-gradient(135deg, #ffffff 0%, #fefefe 100%)',
-      }}>
-      {/* Subtle gradient overlay on hover */}
-      <div
-        className={`absolute inset-0 opacity-0 transition-opacity duration-300 ${isHovered ? 'opacity-5' : ''}`}
+        transform: isHovered ? `rotateX(${mousePosition.y * 5}deg) rotateY(${mousePosition.x * 5}deg) scale(1.02)` : 'rotateX(0deg) rotateY(0deg) scale(1)',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Animated background gradient */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500"
         style={{
-          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%)',
+          background: `radial-gradient(circle at ${(mousePosition.x + 1) * 50}% ${(mousePosition.y + 1) * 50}%, 
+            rgba(59, 130, 246, 0.3) 0%, 
+            rgba(147, 51, 234, 0.2) 40%, 
+            transparent 70%)`
         }}
       />
 
-      {/* Header */}
-      <div className="relative z-10 mb-6 flex items-start justify-between">
-        <div className="flex-1 pr-4">
-          <h2 className="mb-1 text-xl font-bold tracking-tight text-gray-900 transition-all duration-300">{job.title}</h2>
-        </div>
-        <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold tracking-wide shadow-md transition-all duration-300 hover:scale-105 ${getStatusColor(job.status)}`}>
-          {formatStatus(job.status)}
-        </span>
-      </div>
-
-      {/* Description */}
-      <p className="relative z-10 mb-6 line-clamp-3 leading-relaxed text-gray-600">{job.description}</p>
-
-      {/* Details Grid */}
-      <div className="relative z-10 mb-6 grid grid-cols-2 gap-4">
-        {/* Location */}
-        <div className="flex items-center gap-2 rounded-lg bg-gray-50/80 p-3 transition-all duration-200 hover:bg-gray-100/80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-              />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+      <div className="relative p-8">
+        {/* Header with gradient status */}
+        <div className="flex items-start justify-between mb-6">
+          <div className="flex-1 pr-4">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+              {job.title}
+            </h2>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-500">Location</p>
-            <p className="text-sm font-bold text-gray-900">{job.location}</p>
-          </div>
-        </div>
-
-        {/* Payment */}
-        <div className="flex items-center gap-2 rounded-lg bg-gray-50/80 p-3 transition-all duration-200 hover:bg-gray-100/80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-              />
-            </svg>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-500">Payment</p>
-            <p className="text-sm font-bold text-green-600">${job.payment}</p>
-          </div>
-        </div>
-
-        {/* Hirer */}
-        <div className="flex items-center gap-2 rounded-lg bg-gray-50/80 p-3 transition-all duration-200 hover:bg-gray-100/80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-500">Posted by</p>
-            <p className="text-sm font-bold text-gray-900">{job.hirer?.name || 'Anonymous'}</p>
-          </div>
-        </div>
-
-        {/* Date */}
-        <div className="flex items-center gap-2 rounded-lg bg-gray-50/80 p-3 transition-all duration-200 hover:bg-gray-100/80">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-500">Posted</p>
-            <p className="text-sm font-bold text-gray-900">{new Date(job.createdAt).toLocaleDateString()}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Apply Button */}
-      {showApplyNow && (
-        <div className="relative z-10">
-          {session.loading && user.loading ? (
-            <div className="flex items-center justify-center rounded-xl bg-gray-100 px-6 py-3">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
-              <span className="ml-2 font-semibold text-gray-600">Loading...</span>
-            </div>
-          ) : (
-            <button
-              onClick={apply}
-              disabled={isApplying}
-              className={`group/button relative w-full overflow-hidden rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 ${
-                isApplying
-                  ? 'bg-gradient-to-r from-gray-400 to-gray-500'
-                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-              }`}
-              style={{
-                boxShadow: isApplying ? '0 10px 25px rgba(107, 114, 128, 0.3)' : '0 10px 25px rgba(59, 130, 246, 0.3)',
-              }}>
-              {/* Button background gradient animation */}
-              <div
-                className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/button:opacity-100 ${
-                  !isApplying ? 'bg-gradient-to-r from-blue-700 to-purple-700' : ''
-                }`}
-              />
-
-              <span className="relative flex items-center justify-center">
-                {isApplying ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-                    Applying...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="mr-2 h-4 w-4 transition-transform duration-300 group-hover/button:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Apply Now
-                  </>
-                )}
+          
+          {/* Modern status badge */}
+          <div className={`relative px-4 py-2 rounded-full bg-gradient-to-r ${statusConfig.bgColor} border border-white/50 shadow-lg`}>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm">{statusConfig.icon}</span>
+              <span className={`text-xs font-bold tracking-wide ${statusConfig.textColor}`}>
+                {formatStatus(job.status)}
               </span>
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* View Applications Button */}
-      {showViewApplications && (
-        <div className="relative z-10">
-          {session.loading && user.loading ? (
-            <div className="flex items-center justify-center rounded-xl bg-gray-100 px-6 py-3">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
-              <span className="ml-2 font-semibold text-gray-600">Loading...</span>
             </div>
-          ) : (
-            <button
-              onClick={apply}
-              disabled={isApplying}
-              className={`group/button relative w-full overflow-hidden rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 ${isApplying
-                  ? 'bg-gradient-to-r from-gray-400 to-gray-500'
-                  : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-                }`}
-              style={{
-                boxShadow: isApplying ? '0 10px 25px rgba(107, 114, 128, 0.3)' : '0 10px 25px rgba(59, 130, 246, 0.3)',
-              }}>
-              {/* Button background gradient animation */}
-              <div
-                className={`absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/button:opacity-100 ${!isApplying ? 'bg-gradient-to-r from-blue-700 to-purple-700' : ''
-                  }`}
-              />
-
-              <span className="relative flex items-center justify-center">
-                {isApplying ? (<><div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>Applying...</>) : (
-                  <>
-                    <svg
-                      className="mr-2 h-4 w-4 transition-transform duration-300 group-hover/button:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Apply Now
-                  </>
-                )}
-              </span>
-            </button>
-          )}
+          </div>
         </div>
-      )}
+
+        {/* Description with better typography */}
+        <div className="mb-8">
+          <p className="text-gray-700 leading-relaxed text-lg line-clamp-3">
+            {job.description}
+          </p>
+        </div>
+
+        {/* Modern details grid */}
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {/* Location */}
+          <div className="group/item bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-4 border border-blue-200/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-blue-600 uppercase tracking-wide">Location</p>
+                <p className="text-sm font-bold text-gray-800">{job.location}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Payment */}
+          <div className="group/item bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-4 border border-green-200/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-green-600 uppercase tracking-wide">Payment</p>
+                <p className="text-sm font-bold text-green-700">${job.payment}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hirer */}
+          <div className="group/item bg-gradient-to-br from-purple-50 to-violet-100 rounded-2xl p-4 border border-purple-200/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-purple-600 uppercase tracking-wide">Posted by</p>
+                <p className="text-sm font-bold text-gray-800">{job.hirer?.name || 'Anonymous'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Date */}
+          <div className="group/item bg-gradient-to-br from-orange-50 to-amber-100 rounded-2xl p-4 border border-orange-200/50 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg group-hover/item:scale-110 transition-transform duration-300">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide">Posted</p>
+                <p className="text-sm font-bold text-gray-800">{new Date(job.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        {showApplyNow && (
+          <div className="relative">
+            {session.loading && user.loading ? (
+              <div className="flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl px-6 py-4 shadow-inner">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
+                <span className="ml-3 font-semibold text-gray-600">Loading...</span>
+              </div>
+            ) : (
+              <button
+                onClick={apply}
+                disabled={isApplying}
+                className={`group/button relative w-full overflow-hidden rounded-2xl px-8 py-4 font-bold text-lg transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${
+                  isApplying
+                    ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-500'
+                    : 'bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 text-white shadow-2xl hover:shadow-blue-500/25'
+                }`}>
+                
+                {/* Button glow effect */}
+                {!isApplying && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-0 group-hover/button:opacity-20 transition-opacity duration-300 blur-xl" />
+                )}
+                
+                <span className="relative flex items-center justify-center">
+                  {isApplying ? (
+                    <>
+                      <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-gray-500 border-t-transparent"></div>
+                      Applying...
+                    </>
+                  ) : (
+                    <>
+                      <div className="mr-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover/button:scale-110 group-hover/button:rotate-12">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </div>
+                      Apply Now
+                    </>
+                  )}
+                </span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* View Applications Button */}
+        {showViewApplications && (
+          <div className="relative">
+            {session.loading && user.loading ? (
+              <div className="flex items-center justify-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl px-6 py-4 shadow-inner">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
+                <span className="ml-3 font-semibold text-gray-600">Loading...</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => router.push(`/applications?id=${job.id}`)}
+                disabled={isApplying}
+                className={`group/button relative w-full overflow-hidden rounded-2xl px-8 py-4 font-bold text-lg transition-all duration-300 transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 ${
+                  isApplying
+                    ? 'bg-gradient-to-r from-gray-200 to-gray-300 text-gray-500'
+                    : 'bg-gradient-to-r from-purple-500 via-indigo-600 to-blue-600 text-white shadow-2xl hover:shadow-purple-500/25'
+                }`}>
+                
+                {/* Button glow effect */}
+                {!isApplying && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-indigo-500 to-blue-500 opacity-0 group-hover/button:opacity-20 transition-opacity duration-300 blur-xl" />
+                )}
+                
+                <span className="relative flex items-center justify-center">
+                  {isApplying ? (
+                    <>
+                      <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-gray-500 border-t-transparent"></div>
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <div className="mr-3 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center transition-transform duration-300 group-hover/button:scale-110">
+                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </div>
+                      View Applications
+                    </>
+                  )}
+                </span>
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,7 +9,7 @@ interface FloatingMessageProps {
   autoHideAfter?: number; // Duration in milliseconds
 }
 
-export default function FloatingMessage({ children, type = 'default', className = '', autoHideAfter = 3000 }: FloatingMessageProps) {
+export default function FloatingMessage({ children, type = 'default', className = '', autoHideAfter = -1 }: FloatingMessageProps) {
   const [visible, setVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 

@@ -21,7 +21,7 @@ export default function Dashboard() {
 
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeMessage');
     if (!hasSeenWelcome) {
-      setStatus({ status: 'message', message: `Welcome back, ${user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || ''}! 🎉` });
+      setStatus({ status: 'message', message: `Welcome back, ${user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || ''}! 🎉` });
       localStorage.setItem('hasSeenWelcomeMessage', 'true');
     } else {
       setStatus({ status: 'null', message: '' });
@@ -34,7 +34,6 @@ export default function Dashboard() {
     return <Loading />;
   }
 
-  // At this point, we know user is not null
   return (
     <div className="h-screen overflow-hidden bg-gray-50">
       {/* Sidebar - Fixed position */}
@@ -42,8 +41,8 @@ export default function Dashboard() {
         isOpen={sidebarOpen}
         onToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || 'User',
-          email: user?.data.email || 'no email set',
+          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          email: user?.data?.email || 'no email set',
         }}
       />
 
@@ -52,41 +51,32 @@ export default function Dashboard() {
         sidebarOpen={sidebarOpen}
         onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
         user={{
-          name: user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || 'User',
-          email: user?.data.email || 'no email set',
+          name: user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User',
+          email: user?.data?.email || 'no email set',
         }}
       />
 
-      {/* Floating Messages Container - Positioned after header */}
+      {/* Floating Messages Container */}
       <div className={`fixed transition-all duration-300 ${sidebarOpen ? 'left-64' : 'left-16'} pointer-events-none top-20 right-0 z-[60]`}>
         {status.message && status.message.trim() !== '' && (
           <div className="pointer-events-auto flex justify-center pt-4">
             <FloatingMessage type="success">
-              Welcome back, {user?.data.user_metadata?.name || user?.data.email?.split('@')[0] || 'User'}! 🎉
+              Welcome back, {user?.data?.user_metadata?.name || user?.data?.email?.split('@')[0] || 'User'}! 🎉
             </FloatingMessage>
           </div>
         )}
       </div>
 
-      {/* Main Content Container - Scrollable area only */}
-      <main className={`fixed top-20 bottom-0 transition-all duration-300 ${sidebarOpen ? 'left-64' : 'left-16'} right-0 overflow-y-auto bg-gray-50`}>
-        <div className="min-h-full">
-          {/* Dashboard content area */}
-          <div className="space-y-6 p-6">
-            {/* Dashboard Header */}
-            <div className="text-center">
-              <h1 className="mb-2 text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600">Track and manage your trades</p>
-            </div>
-
-            {/* Jobs List Section */}
-            <div className="rounded-lg bg-white p-6 shadow-sm">
-              <h2 className="mb-6 text-xl font-semibold text-gray-800">Jobs</h2>
-              <div className="space-y-4">
-                <JobsList setStatus={setStatus} />
-              </div>
-            </div>
+      {/* Main Content */}
+      <main className={`fixed top-20 bottom-0 transition-all duration-300 ${sidebarOpen ? 'left-64' : 'left-16'} w-full overflow-y-auto`}
+            style={{ width: sidebarOpen ? 'calc(100% - 16rem)' : 'calc(100% - 4rem)' }}>
+        <div className="p-6">
+          {/* Quick Description */}
+          <div className="mb-6 text-center">
+            <p className="text-gray-600">Discover and manage your skill-based trading opportunities</p>
           </div>
+          
+          <JobsList setStatus={setStatus} />
         </div>
       </main>
     </div>

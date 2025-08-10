@@ -5,92 +5,92 @@ import prisma from '@/lib/prisma/prisma';
 import { parseError } from '@/lib/util/server_util';
 import { DefaultAPIRet, AcceptJobArgs, User, GetJobApplicantsRet, RatingType } from '@/types';
 
-export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const jobId = searchParams.get('jobId');
+// export async function GET(request: Request) {
+//   try {
+//     const { searchParams } = new URL(request.url);
+//     const jobId = searchParams.get('jobId');
 
-    // Validate required parameter
-    if (!jobId || typeof jobId !== 'string') {
-      return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: 'Missing required parameter: jobId' }, { status: 400 });
-    }
+//     // Validate required parameter
+//     if (!jobId || typeof jobId !== 'string') {
+//       return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: 'Missing required parameter: jobId' }, { status: 400 });
+//     }
 
-    // Authenticate user
-    const supabase = await createServerSupabaseClient();
-    const auth = request.headers.get('authorization');
-    const token = auth?.split(' ')[1];
-    const { data, error: authError } = await supabase.auth.getUser(token);
-    const user = data?.user;
+//     // Authenticate user
+//     const supabase = await createServerSupabaseClient();
+//     const auth = request.headers.get('authorization');
+//     const token = auth?.split(' ')[1];
+//     const { data, error: authError } = await supabase.auth.getUser(token);
+//     const user = data?.user;
 
-    if (authError || !user) {
-      return NextResponse.json<GetJobApplicantsRet>(
-        { status: 'error', message: await parseError(authError?.message || 'Please sign in to view applicants', (authError as any)?.code) },
-        { status: 401 },
-      );
-    }
+//     if (authError || !user) {
+//       return NextResponse.json<GetJobApplicantsRet>(
+//         { status: 'error', message: await parseError(authError?.message || 'Please sign in to view applicants', (authError as any)?.code) },
+//         { status: 401 },
+//       );
+//     }
 
-    // Fetch the job with its applications
-    const job = await prisma.job.findUnique({
-      where: { id: jobId },
-      select: {
-        id: true,
-        hirerId: true,
-        status: true,
-        title: true,
-        applications: {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            contactInfo: true,
-            ratingTo: {
-              where: { type: 'HIRER' },
-              select: {
-                id: true,
-                value: true,
-                text: true,
-                type: true,
-                fromId: true,
-                toId: true,
-                jobId: true,
-                createdAt: true,
-                updatedAt: true,
-              },
-            },
-          },
-        },
-      },
-    });
+//     // Fetch the job with its applications
+//     const job = await prisma.job.findUnique({
+//       where: { id: jobId },
+//       select: {
+//         id: true,
+//         hirerId: true,
+//         status: true,
+//         title: true,
+//         applications: {
+//           select: {
+//             id: true,
+//             email: true,
+//             name: true,
+//             contactInfo: true,
+//             ratingTo: {
+//               where: { type: 'HIRER' },
+//               select: {
+//                 id: true,
+//                 value: true,
+//                 text: true,
+//                 type: true,
+//                 fromId: true,
+//                 toId: true,
+//                 jobId: true,
+//                 createdAt: true,
+//                 updatedAt: true,
+//               },
+//             },
+//           },
+//         },
+//       },
+//     });
 
-    if (!job) {
-      return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
-    }
+//     if (!job) {
+//       return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
+//     }
 
-    // Check if user is authorized to view applicants (must be the hirer)
-    if (job.hirerId !== user.id) {
-      return NextResponse.json<GetJobApplicantsRet>(
-        { status: 'error', message: 'You are not authorized to view applicants for this job' },
-        { status: 403 },
-      );
-    }
+//     // Check if user is authorized to view applicants (must be the hirer)
+//     if (job.hirerId !== user.id) {
+//       return NextResponse.json<GetJobApplicantsRet>(
+//         { status: 'error', message: 'You are not authorized to view applicants for this job' },
+//         { status: 403 },
+//       );
+//     }
 
-    return NextResponse.json<GetJobApplicantsRet>(
-      {
-        status: 'success',
-        message: '',
-        applicants: job.applications,
-      },
-      { status: 200 },
-    );
-  } catch (error: any) {
-    console.error('api/job/accept/route.ts GET error:', error);
-    return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: await parseError(error.message, error.code) }, { status: 500 });
-  }
-}
+//     return NextResponse.json<GetJobApplicantsRet>(
+//       {
+//         status: 'success',
+//         message: '',
+//         applicants: job.applications,
+//       },
+//       { status: 200 },
+//     );
+//   } catch (error: any) {
+//     console.error('api/job/accept/route.ts GET error:', error);
+//     return NextResponse.json<GetJobApplicantsRet>({ status: 'error', message: await parseError(error.message, error.code) }, { status: 500 });
+//   }
+// }
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as Partial<AcceptJobArgs>;
+    const body: AcceptJobArgs = await request.json();
     const { jobId, workerId } = body;
 
     // Validate required fields
