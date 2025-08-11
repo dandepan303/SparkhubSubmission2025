@@ -55,7 +55,6 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/auth/sign-in';
         return NextResponse.redirect(url);
       } else {
-        console.log('middle ware', user?.role, requiredRole); // TODO: REMOVE
         if (!isAuthorized(user?.role, requiredRole)) {
           const url = request.nextUrl.clone();
           url.pathname = '/';

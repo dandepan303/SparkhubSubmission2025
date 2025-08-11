@@ -23,7 +23,8 @@ export default function Onboard() {
   useEffect(() => {
     if (profile.loading && session.loading) return;
 
-    if (profile && (!profile.data.contactInfo || profile.data.contactInfo.trim() === '')) {
+    console.log(!profile?.data?.contactInfo);
+    if (profile && (!profile?.data?.contactInfo || profile?.data?.contactInfo.trim() === '')) {
       setStatus({ status: 'contact-info', message: '' });
     } else {
       setStatus({ status: 'info', message: '' });
@@ -60,12 +61,12 @@ export default function Onboard() {
         setStatus({ status: 'info', message: '' });
       } else {
         // If the server returns an error, set the status message
-        setStatus({ status: 'contact-info', message: res.data?.message || 'Failed to save contact info.' });
+        setStatus({ status: 'contact-info', message: res.data?.message || 'Failed to save contact info, please try again' });
       }
     } catch (err: any) {
       console.error('Onboarding API error', err);
       // Catch network or other request errors
-      setStatus({ status: 'contact-info', message: await parseError(err) });
+      setStatus({ status: 'contact-info', message: 'Failed to save contact info, please try again' });
     }
   };
 

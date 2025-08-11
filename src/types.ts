@@ -167,3 +167,10 @@ export type SpendArgs = {
 export type CompleteJobArgs = {
   jobId: string;
 };
+
+export type NotificationsGetRet = {
+  status: 'success' | 'error';
+  message: string;
+  notifications?: string[];
+  newNotifications?: boolean;
+}

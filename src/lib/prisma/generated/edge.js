@@ -181,7 +181,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/workspaces/SparkhubSubmission2025/src/lib/prisma/generated",
+      "value": "/Users/dean/SparkhubSubmission2025/src/lib/prisma/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -190,17 +190,16 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "debian-openssl-1.1.x",
+        "value": "darwin-arm64",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/workspaces/SparkhubSubmission2025/prisma/schema.prisma",
+    "sourceFilePath": "/Users/dean/SparkhubSubmission2025/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../../prisma",
   "clientVersion": "6.13.0",

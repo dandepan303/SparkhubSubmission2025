@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const job = await prisma.job.findUnique({ where: { id: jobId }, select: { id: true, status: true, hirerId: true } });
+    const job = await prisma.job.findUnique({ where: { id: jobId }, select: { id: true, title: true, status: true, hirerId: true } });
     if (!job) {
       return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Job not found' }, { status: 404 });
     }
@@ -48,8 +48,21 @@ export async function POST(request: Request) {
       return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You have already applied to this job' }, { status: 409 });
     }
 
-    // Connect user to job applications
-    await prisma.job.update({ where: { id: jobId }, data: { applications: { connect: { id: user.id } } } });
+    await prisma.$transaction(async tx => {
+      // Connect job to user through application
+      await tx.job.update({ where: { id: jobId }, data: { applications: { connect: { id: user.id } } } });
+
+      // notify
+      await tx.user.update({
+        where: { id: job.hirerId },
+        data: {
+          notifications: {
+            push: `${user.user_metadata.name} has applied to your job: ${job.title}`,
+          },
+          newNotifications: true,
+        },
+      });
+    });
 
     return NextResponse.json<DefaultAPIRet>({ status: 'success', message: 'Application submitted' }, { status: 200 });
   } catch (error: any) {

@@ -39,6 +39,8 @@ export async function POST(request: Request) {
   try {
     const { offeringId, description, cost, quantity }: OfferingPostArgs = await request.json();
 
+    console.log(offeringId, description, cost, quantity);
+
     // Basic validation
     if (!description || typeof description !== 'string')
       return NextResponse.json({ status: 'error', message: 'Description is required' }, { status: 400 });

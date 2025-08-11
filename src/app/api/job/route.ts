@@ -4,42 +4,15 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { parseError } from "@/lib/util/server_util";
 import { JobGetRet } from "@/types";
 import { publicUserData } from "@/lib/config";
+import { JobStatus } from "@/lib/prisma/generated";
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const jobId = searchParams.get("id");
 
-        if (!jobId) {
-          const jobs = await prisma.job.findMany({
-            include: {
-              hirer: { select: publicUserData },
-              worker: { select: publicUserData },
-              applications: { select: publicUserData },
-              ratings: {
-                include: {
-                  from: { select: publicUserData },
-                  to: { select: publicUserData },
-                },
-              },
-            }
-          });
-
-          if (!jobs) return NextResponse.json<JobGetRet>({ status: "error", message: "Job not found" }, { status: 404 });
-
-          return NextResponse.json<JobGetRet>(
-            {
-                status: "success",
-                message: "Job retrieved successfully",
-                jobs: jobs,
-            },
-            { status: 200 }
-          );
-        }
-      
         const supabase = await createServerSupabaseClient();
 
-        // Try to get user from Authorization header first; fallback to cookie-based session
         let currentUserId: string | undefined;
         try {
             const authHeader = request.headers.get("authorization");
@@ -52,17 +25,56 @@ export async function GET(request: Request) {
             currentUserId = undefined;
         }
 
-        // Fetch minimal job data to determine authorship
+        // GET LIST OF JOBS
+        if (!jobId) {
+            const whereQuery = currentUserId
+                ? {
+                      OR: [
+                          { status: "SEARCHING"  as JobStatus},
+                          { hirerId: currentUserId },
+                          { workerId: currentUserId }
+                      ]
+                  }
+                : {
+                      status: "SEARCHING" as JobStatus
+                  };
+
+            const jobs = await prisma.job.findMany({
+                where: whereQuery,
+                include: {
+                    hirer: { select: publicUserData },
+                    worker: { select: publicUserData },
+                    applications: { select: publicUserData },
+                    ratings: {
+                        include: {
+                            from: { select: publicUserData },
+                            to: { select: publicUserData },
+                        },
+                    },
+                },
+            });
+
+          console.log('jobs', jobs);
+
+            if (!jobs) return NextResponse.json<JobGetRet>({ status: "error", message: "Job not found" }, { status: 404 });
+
+            return NextResponse.json<JobGetRet>(
+                {
+                    status: "success",
+                    message: "Job retrieved successfully",
+                    jobs: jobs,
+                },
+                { status: 200 }
+            );
+        }
+
+        // GET SPECIFIC JOB
         const jobOwner = await prisma.job.findUnique({
             where: { id: jobId },
             select: { id: true, hirerId: true },
         });
 
-        if (!jobOwner) {
-            return NextResponse.json<JobGetRet>({ status: "error", message: "Job not found" }, { status: 404 });
-        }
-
-        const isAuthor = currentUserId && currentUserId === jobOwner.hirerId;
+        const isAuthor = currentUserId && jobOwner && currentUserId === jobOwner.hirerId;
 
         const job = await prisma.job.findUnique({
             where: { id: jobId },

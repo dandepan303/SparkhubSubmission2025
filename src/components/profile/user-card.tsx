@@ -3,7 +3,7 @@
 import { AcceptJobArgs, User, DefaultAPIRet } from "@/types";
 import { useAuth } from '@/components/auth/auth-provider';
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { parseError } from "@/lib/util/server_util";
 
 type StatProps = { label: string; value: string | number, icon: string, color: string };
@@ -17,7 +17,7 @@ function Stat({ label, value, icon, color }: StatProps) {
   );
 }
 
-const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user: User, jobId: string, setStatus: any }) {
+const UserCard = React.memo(function UserCard({ user, jobId, setStatus, loadJob }: { user: User, jobId: string, setStatus: any, loadJob: any }) {
   const { session, user: authUser } = useAuth();
   
   const [isOwner, setIsOwner] = useState<boolean>(false);
@@ -48,7 +48,7 @@ const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user
   const joinedDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-";
   const updatedDate = user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : "-";
 
-  const onAccept = async () => {
+  const onAccept = useCallback(async () => {
     setIsAccepting(true);
     setStatus({ status: 'loading', message: 'Accepting worker...' });
 
@@ -67,20 +67,20 @@ const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user
         headers: { Authorization: `Bearer ${session?.data?.access_token}` },
       });
 
+      setStatus(res);
+
       if (res.status === 'success') {
         setIsAccepted(true);
-        setStatus({ status: 'success', message: 'Worker accepted successfully!' });
-      } else {
-        setStatus({ status: 'error', message: res.message || 'Failed to accept worker' });
+        loadJob();
       }
     } catch (error: any) {
-      console.error('/component/usercard accept_worker error', error);
+      console.log('/component/usercard accept_worker error', error);
       await parseError(error.message, error.code);
       setStatus({ status: 'error', message: 'There was an issue accepting the worker' });
     } finally {
       setIsAccepting(false);
     }
-  }
+  }, [setStatus, session?.data?.access_token, setIsAccepted, loadJob, jobId, user.id]);
 
   const getAvatarGradient = () => {
     const hash = user.name?.split('').reduce((a, b) => {
@@ -109,8 +109,8 @@ const UserCard = React.memo(function UserCard({ user, jobId, setStatus }: { user
 
   useEffect(() => {
     if (authUser.loading || !authUser.data) return;
-    setIsOwner(authUser.data.id === user.id);
-  }, [authUser.data, authUser.loading, setIsOwner]);
+    setIsOwner(authUser?.data?.id === user.id);
+  }, [authUser.data, authUser.loading, setIsOwner, user.id]);
 
    return (
     <div 

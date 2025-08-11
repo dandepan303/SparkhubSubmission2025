@@ -2,40 +2,48 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { SidebarProvider } from "@/components/context/sidebar-context";
 import AuthProtecter from "@/components/auth/auth-protecter";
-import AnimatePresenceWrapper from "@/components/ui/AnimatePresenceWrapper";
 
 const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-    title: "TradeSpace",
-    description: "Enabling trust and exchange in places with cash shortages",
+  title: "TradeSpace",
+  description: "Enabling trust and exchange in places with cash shortages",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-      <html lang="en">
-        {/* Add a background class to the body element */}
-        <body className={`${geistSans.variable} ${geistMono.variable} bg-gray-50 text-black antialiased`}>
-          <AuthProvider>
+  return (
+    <html lang="en" className={`${nunito.variable} ${geistSans.variable} ${geistMono.variable}`}>
+      <body className="bg-white text-black antialiased">
+        <AuthProvider>
+          <SidebarProvider>
             <AuthProtecter>
               <script src="https://accounts.google.com/gsi/client" async defer></script>
-              <AnimatePresenceWrapper>{children}</AnimatePresenceWrapper>
+              {children}
             </AuthProtecter>
-          </AuthProvider>
-        </body>
-      </html>
-    );
+          </SidebarProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }

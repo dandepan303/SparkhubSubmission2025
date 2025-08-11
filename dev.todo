@@ -1,25 +1,14 @@
 Dean (whatever order u wanna do them):
 	Current Task (lock inn u got this):
-	▫ job-card @high
-		▫ line: 32 and 33, complete the buttons for them, functions are provided for you
-	▫ Fix nunito google font not loading in production @high
-	▫ app/rating @high
-	▫ components/inventory/offering userRole front end
-		▫ onDelete, onSpend @high
-		▫ onUpdate @low
+	▫ Fix nunito google font not loading in production @high testing
 
 	Remaining Tasks:
 		▫ Mobile responsive cleanup @medium
 		▫ app/rate: when error, add a button that takes back to dashboard
 		▫ job-card: when click on user -> take to profile page
 		▫ Add unclickable sidebar component to onboarding, explain what each tab does in onboarding
-		▫ Clean up create jobs offer and add sidebar/header to page
-		▫ Fix collapsed sidebar re-expanding on page change
-		▫ Fix animation page change flickering @low
 
 Kevin:
-	▫ component/inventory spendOffering api call
-		▫ first understand route, then write api call
 	▫ notifications logic
 	▫ advanced rate logic (ie. metrics tracking)
 
@@ -33,6 +22,8 @@ Kevin:
 			▫ set worker to B
 		▫ Complete job
 			▫ A set status COMPLETED
+
+		
 	Endpoints:
 		▫ /create
 			▫ params: user (cookies), job data

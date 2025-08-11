@@ -1,7 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { Role } from '@/types';
-import axios from 'axios';
 import { OfferingGetRet, OfferingPostArgs, OfferingDeleteArgs, DefaultAPIRet } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {

@@ -22,12 +22,8 @@ export async function POST(request: Request) {
     const token = auth?.split(' ')[1];
     const { data, error } = await supabase.auth.getUser(token);
 
-    if (!data?.user) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Please sign in first' }, { status: 401 });
-    }
-    if (error) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(error.message, (error as any).code) }, { status: 401 });
-    }
+    if (!data?.user) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Please sign in first' }, { status: 401 });
+    if (error) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: await parseError(error.message, (error as any).code) }, { status: 401 });
 
     const userId = data.user.id;
 
@@ -48,29 +44,21 @@ export async function POST(request: Request) {
       }
     });
 
-    if (!offering) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Offering not found' }, { status: 404 });
-    }
+    if (!offering) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Offering not found' }, { status: 404 });
 
     // Check if the user has worked for the offering owner and completed jobs
     const completedJobs = offering.owner.jobsCreated;
-    if (completedJobs.length === 0) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You must complete a job with this user before making purchases' }, { status: 403 });
-    }
+    if (completedJobs.length === 0) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You must complete a job with this user before making purchases' }, { status: 403 });
 
     // Find a suitable job with sufficient payment
     const spendQuantity = quantity || 1;
     const totalCost = offering.cost * spendQuantity;
     
     const suitableJob = completedJobs.find(job => job.payment >= totalCost);
-    if (!suitableJob) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Insufficient payment available from completed jobs' }, { status: 403 });
-    }
+    if (!suitableJob) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'Insufficient payment available from completed jobs' }, { status: 403 });
 
     // Check offering quantity if it's limited
-    if (offering.quantity !== null && offering.quantity < spendQuantity) {
-      return NextResponse.json<DefaultAPIRet>({ status: 'error', message: `Insufficient quantity available. Only ${offering.quantity} remaining` }, { status: 400 });
-    }
+    if (offering.quantity !== null && offering.quantity < spendQuantity) return NextResponse.json<DefaultAPIRet>({ status: 'error', message: `Insufficient quantity available. Only ${offering.quantity} remaining` }, { status: 400 });
 
     // Perform the transaction
     await prisma.$transaction(async (tx) => {
@@ -92,8 +80,8 @@ export async function POST(request: Request) {
         });
       }
 
-      // Add notification to offering owner
-      const notification = `${data.user.email} purchased ${spendQuantity} x "${offering.description}" for $${totalCost}`;
+      // notify
+      const notification = `${data.user.user_metadata.name} purchased ${spendQuantity} x "${offering.description}" for $${totalCost}`;
       await tx.user.update({
         where: { id: offering.userId },
         data: {

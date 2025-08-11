@@ -1,13 +1,16 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { MdOutlineBackpack } from "react-icons/md";
+import { FaRegStar } from "react-icons/fa";
 import { 
   AiOutlineHome, 
   AiOutlineFileText, 
   AiOutlineSearch, 
   AiOutlineSetting,
   AiOutlineLeft,
-  AiOutlineRight
+  AiOutlineRight,
+  AiOutlineMail
 } from 'react-icons/ai';
 import Image from 'next/image';
 
@@ -26,7 +29,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
   const pathname = usePathname();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
-  const menuItems = [
+  const topMenuItems = [
     {
       id: 'home',
       label: 'Home',
@@ -34,27 +37,46 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
       path: '/dashboard',
     },
     {
-      id: 'offers',
-      label: 'My Offers',
+      id: 'discover-jobs',
+      label: 'Discover Jobs',
+      icon: AiOutlineSearch,
+      path: '/discover-jobs',
+    },
+    {
+      id: 'create-job',
+      label: 'Create Job',
       icon: AiOutlineFileText,
+      path: '/create-job',
+    },
+  ];
+
+  const bottomMenuItems = [
+    {
+      id: 'Inventory',
+      label: 'Inventory',
+      icon: MdOutlineBackpack,
       path: '/profile/inventory',
     },
     {
-      id: 'requests',
-      label: 'My Jobs',
-      icon: AiOutlineSearch,
-      path: '/profile',
+      id: 'My Ratings',
+      label: 'My Ratings',
+      icon: FaRegStar,
+      path: '/profile/rating',
     },
     {
-      id: 'settings',
-      label: 'Settings',
-      icon: AiOutlineSetting,
-      path: '/profile/settings',
+      id: 'notifications',
+      label: 'Notifications',
+      icon: AiOutlineMail,
+      path: '/profile/notifications',
     },
   ];
 
   const handleNavigation = (path: string) => {
     router.push(path);
+  };
+
+  const handleProfileClick = () => {
+    router.push('/profile');
   };
 
   const getUserInitial = () => {
@@ -63,6 +85,60 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
     }
     return 'U';
   };
+
+  const renderMenuItems = (items: typeof topMenuItems) => (
+    <ul className="space-y-1">
+      {items.map((item) => {
+        const isActive = pathname === item.path;
+        const IconComponent = item.icon;
+        
+        return (
+          <li key={item.id}>
+            <button
+              onClick={() => handleNavigation(item.path)}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
+              className={`group relative w-full flex items-center rounded-lg p-3 text-left transition-all duration-200
+                ${isActive
+                  ? 'bg-blue-50 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:bg-gray-100'
+                } 
+                ${!isOpen ? 'justify-center' : ''}
+                min-h-[44px]`}
+              title={!isOpen ? item.label : undefined}
+              aria-label={item.label}
+            >
+              {/* Icon */}
+              <div className={`flex items-center justify-center flex-shrink-0 
+                ${isOpen ? 'mr-3' : ''}`}>
+                <IconComponent className="h-5 w-5" />
+              </div>
+
+              {/* Label - only show when expanded */}
+              {isOpen && (
+                <span className="font-medium text-sm truncate">
+                  {item.label}
+                </span>
+              )}
+
+              {/* Tooltip for collapsed state */}
+              {!isOpen && hoveredItem === item.id && (
+                <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg whitespace-nowrap z-50 pointer-events-none">
+                  {item.label}
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+                </div>
+              )}
+
+              {/* Active Indicator */}
+              {isActive && isOpen && (
+                <div className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-blue-600 flex-shrink-0" />
+              )}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
     <>
@@ -108,62 +184,26 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
 
           {/* Navigation Menu */}
           <nav className="p-2 flex-1 overflow-y-auto">
-            <ul className="space-y-1">
-              {menuItems.map((item) => {
-                const isActive = pathname === item.path;
-                const IconComponent = item.icon;
-                
-                return (
-                  <li key={item.id}>
-                    <button
-                      onClick={() => handleNavigation(item.path)}
-                      onMouseEnter={() => setHoveredItem(item.id)}
-                      onMouseLeave={() => setHoveredItem(null)}
-                      className={`group relative w-full flex items-center rounded-lg p-3 text-left transition-all duration-200
-                        ${isActive
-                          ? 'bg-blue-50 text-blue-600'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 active:bg-gray-100'
-                        } 
-                        ${!isOpen ? 'justify-center' : ''}
-                        min-h-[44px]`}
-                      title={!isOpen ? item.label : undefined}
-                      aria-label={item.label}
-                    >
-                      {/* Icon */}
-                      <div className={`flex items-center justify-center flex-shrink-0 
-                        ${isOpen ? 'mr-3' : ''}`}>
-                        <IconComponent className="h-5 w-5" />
-                      </div>
-
-                      {/* Label - only show when expanded */}
-                      {isOpen && (
-                        <span className="font-medium text-sm truncate">
-                          {item.label}
-                        </span>
-                      )}
-
-                      {/* Tooltip for collapsed state */}
-                      {!isOpen && hoveredItem === item.id && (
-                        <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg whitespace-nowrap z-50 pointer-events-none">
-                          {item.label}
-                          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
-                        </div>
-                      )}
-
-                      {/* Active Indicator */}
-                      {isActive && isOpen && (
-                        <div className="absolute right-2 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-blue-600 flex-shrink-0" />
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+            {/* Top Menu Items */}
+            {renderMenuItems(topMenuItems)}
+            
+            {/* Divider Line */}
+            <div className="my-4 mx-3">
+              <div className="h-px bg-gray-200"></div>
+            </div>
+            
+            {/* Bottom Menu Items */}
+            {renderMenuItems(bottomMenuItems)}
           </nav>
 
           {/* Bottom Section - User Profile */}
           <div className="border-t border-gray-200 p-4 flex-shrink-0">
-            <div className={`flex items-center ${isOpen ? 'space-x-3' : 'justify-center'}`}>
+            <button
+              onClick={handleProfileClick}
+              className={`w-full flex items-center transition-all duration-200 rounded-lg p-2 -m-2 hover:bg-gray-50 active:bg-gray-100
+                ${isOpen ? 'space-x-3' : 'justify-center'}`}
+              aria-label="Go to profile"
+            >
               {/* Avatar */}
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold shadow-sm flex-shrink-0">
                 {user?.avatar ? (
@@ -179,7 +219,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
               
               {/* User Info - only show when expanded */}
               {isOpen && (
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 text-left">
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {user?.name || 'User Name'}
                   </p>
@@ -188,7 +228,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
                   </p>
                 </div>
               )}
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -197,7 +237,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg">
         <nav className="px-2 py-1">
           <ul className="flex items-center justify-around">
-            {menuItems.map((item) => {
+            {[...topMenuItems, ...bottomMenuItems].map((item) => {
               const isActive = pathname === item.path;
               const IconComponent = item.icon;
               
@@ -237,7 +277,11 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
 
         {/* Mobile User Profile - Overlay */}
         <div className="absolute -top-16 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 hidden" id="mobile-user-menu">
-          <div className="flex items-center space-x-3">
+          <button
+            onClick={handleProfileClick}
+            className="flex items-center space-x-3 w-full text-left hover:bg-gray-50 rounded-md p-1 -m-1 transition-colors"
+            aria-label="Go to profile"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold text-sm flex-shrink-0">
               {user?.avatar ? (
                 <Image 
@@ -257,7 +301,7 @@ export default function Sidebar({ isOpen, onToggle, user }: SidebarProps) {
                 {user?.email || 'user@example.com'}
               </p>
             </div>
-          </div>
+          </button>
         </div>
       </div>
 

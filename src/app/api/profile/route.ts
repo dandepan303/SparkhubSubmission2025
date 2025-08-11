@@ -12,10 +12,11 @@ export async function GET(request: Request) {
 
     // getting current user id
     const supabase = await createServerSupabaseClient();
-
     const auth = request.headers.get('authorization');
     const token = auth?.split(' ')[1];
     const { data, error } = await supabase.auth.getUser(token);
+
+    if (error) return NextResponse.json({ user: null }, { status: 200 });
 
     // fetching db data
     const user = await prisma.user.findUnique({
@@ -51,7 +52,7 @@ export async function GET(request: Request) {
       { status: 200 },
     );
   } catch (error: any) {
-    console.log('/api/profile/[id] get error');
+    console.log('/api/profile get error');
     parseError(error.message, error.code);
 
     return NextResponse.json({ user: null }, { status: 200 });

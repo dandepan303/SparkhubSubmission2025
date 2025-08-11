@@ -19,7 +19,7 @@ const GoogleAuthButton = dynamic(() => import('@/components/auth/google-button')
 
 export default function SignUp() {
   const router = useRouter();
-  const { session } = useAuth();
+  const { session, signIn } = useAuth();
 
   const [status, setStatus] = useState<{ status: 'success' | 'error' | 'loading' | 'page-loading' | 'null'; message: string }>({
     status: 'page-loading',
@@ -91,6 +91,10 @@ export default function SignUp() {
       .post(`/api/signup/email`, reqBody, { signal: controller.signal, withCredentials: true })
       .then(res => {
         setStatus({ status: res.data.status, message: res.data.message });
+
+        if (res.data.status === 'success') {
+          signIn(email, password);
+        }
       })
       .catch(err => {
         if (err.response) {
@@ -185,8 +189,7 @@ export default function SignUp() {
           {/* Hero Text */}
           <div className="mb-4 text-center">
             <h2 className="mb-2 text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
-              Join the
-              <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Community</span>
+              Join the <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Community</span>
             </h2>
             <p className="leading-relaxed text-gray-600">Start trading skills with neighbors in your area</p>
           </div>

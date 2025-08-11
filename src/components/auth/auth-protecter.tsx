@@ -25,12 +25,12 @@ export default function AuthProtecter({ children, className }: AuthProtecterProp
     if (profile.loading) return;
 
     async function exec() {
-      const userRole = (profile.data ? profile.data.role : 'guest') as Role;
+      const userRole = (profile?.data?.role ?? 'guest') as Role;
 
       const requiredRole = Object.entries(privateRoutes).find(([route]) => pathname.startsWith(route))?.[1] || 'guest';
 
       if (requiredRole && !isAuthorized(userRole, requiredRole)) {
-        router.push('/auth/sign-in?message=You+do+not+have+access+to+this');
+        router.push('/auth/sign-in/');
         return;
       }
 

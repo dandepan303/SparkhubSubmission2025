@@ -305,7 +305,7 @@ export default function SignIn(params: SignInParams) {
                 <button
                   onClick={() => router.push('/auth/sign-up')}
                   className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text font-semibold text-transparent transition-all duration-200 hover:from-blue-700 hover:to-purple-700">
-                  Sign up
+                  Sign Up
                 </button>
               </p>
             </div>

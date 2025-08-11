@@ -8,7 +8,7 @@ interface MessageProps {
   className?: string;
 }
 
-export default function Message({ children, color, className = '' }: MessageProps) {
+export default function Message({ children, color = 'gray', className = '' }: MessageProps) {
   const [visible, setVisible] = useState(true);
 
   // default is white

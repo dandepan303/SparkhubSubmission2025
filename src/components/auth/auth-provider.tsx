@@ -52,7 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
     
     try {
-      const res = await axios.get(`/api/profile/?id=${currSession.user.id}`, {
+      const res = await axios.get(`/api/profile?id=${currSession.user.id}`, {
         validateStatus: () => true,
         withCredentials: true,
         headers: { Authorization: `Bearer ${currSession?.access_token}` },
@@ -94,7 +94,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { data, error } = await supabase
         .from('profiles')
         .update(updates)
-        .eq('id', user.data.id)
+        .eq('id', user?.data?.id)
         .select()
         .single();
 
@@ -196,7 +196,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
    if (log)  console.log('Auth state:', {
       user: { data: !!user.data, loading: user.loading },
-      profile: { data: !!profile.data, loading: profile.loading },
+      profile: { data: !!profile?.data, loading: profile.loading },
       session: { data: !!session.data, loading: session.loading },
       version
     });

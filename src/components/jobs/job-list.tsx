@@ -8,12 +8,10 @@ import { useAuth } from "@/components/auth/auth-provider";
 
 export default function JobsList({
   setStatus,
-  providedJobs,
-  showApplyNowParam,
+  providedJobs
 }: {
   setStatus: any;
   providedJobs?: Job[];
-  showApplyNowParam?: boolean;
 }) {
   const [jobs, setJobs] = useState<Job[]>(providedJobs || []);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,7 +25,7 @@ export default function JobsList({
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 1000 * 60); // 60 second timeout
 
-      const { data: res }: { data: JobGetRet } = await axios.get(`/api/job/`, {
+      const { data: res }: { data: JobGetRet } = await axios.get(`/api/job`, {
         signal: controller.signal,
         withCredentials: true,
         validateStatus: () => true,
@@ -47,7 +45,7 @@ export default function JobsList({
     if (providedJobs) return;
 
     loadJobs();
-  }, [session.loading, providedJobs, session?.data?.access_token]);
+  }, [session.loading, providedJobs, session?.data?.access_token, loadJobs]);
 
   // Simple Loading Screen
   const LoadingScreen = () => (
@@ -93,7 +91,7 @@ export default function JobsList({
       {!isLoading && jobs.length > 0 && (
         <div className="space-y-4">
           {jobs.map(job => (
-            <JobCard key={job.id} job={job} setStatus={setStatus} showApplyNowParam={showApplyNowParam} />
+            <JobCard key={job.id} job={job} setStatus={setStatus} loadJobs={providedJobs ? undefined : loadJobs} />
           ))}
         </div>
       )}

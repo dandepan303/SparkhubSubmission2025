@@ -3,9 +3,8 @@ import { Role } from '@/types';
 // formatted env variables
 export const config = {
   app: {
-    name: process.env.NEXT_PUBLIC_APP_NAME || 'SafeSpace',
+    name: process.env.NEXT_PUBLIC_APP_NAME || 'TradeSpace',
     url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
-    default_route: process.env.NEXT_PUBLIC_DEFAULT_ROUTE || '/',
     default_url: (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000') + (process.env.NEXT_PUBLIC_DEFAULT_ROUTE || ''),
   },
   supabase: {

@@ -90,40 +90,43 @@ export async function POST(request: Request) {
       return NextResponse.json<DefaultAPIRet>({ status: 'error', message: 'You have already rated this job' }, { status: 409 });
     }
 
-    // Create the rating
-    const rating = await prisma.rating.create({
-      data: {
-        value: value,
-        text: text || null,
-        type: ratingType,
-        fromId: user.id,
-        toId: toId,
-        jobId: jobId,
-      },
-      include: {
-        from: {
-          select: { id: true, name: true },
+    await prisma.$transaction(async tx => {
+      // Create the rating
+      const rating = await prisma.rating.create({
+        data: {
+          value: value,
+          text: text || null,
+          type: ratingType,
+          fromId: user.id,
+          toId: toId,
+          jobId: jobId,
         },
-        to: {
-          select: { id: true, name: true },
+        include: {
+          from: {
+            select: { id: true, name: true },
+          },
+          to: {
+            select: { id: true, name: true },
+          },
+          job: {
+            select: { id: true, title: true },
+          },
         },
-        job: {
-          select: { id: true, title: true },
+      });
+  
+      // notify
+      const notificationMessage = `You received a ${value}-star rating from ${rating.from.name} for job: ${job.title}`;
+      await prisma.user.update({
+        where: { id: toId },
+        data: {
+          notifications: {
+            push: notificationMessage,
+          },
+          newNotifications: true,
         },
-      },
+      });
     });
 
-    // Add notification to the rated user
-    const notificationMessage = `You received a ${value}-star rating from ${rating.from.name} for job: ${job.title}`;
-    await prisma.user.update({
-      where: { id: toId },
-      data: {
-        notifications: {
-          push: notificationMessage,
-        },
-        newNotifications: true,
-      },
-    });
 
     return NextResponse.json<DefaultAPIRet>(
       {

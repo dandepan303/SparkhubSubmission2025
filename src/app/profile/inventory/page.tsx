@@ -1,6 +1,6 @@
 'use client';
 import { useAuth } from '@/components/auth/auth-provider';
-import Inventory from '@/components/inventory/inventory';
+import Inventory from '@/components/profile/inventory/inventory';
 import Loading from '@/components/ui/loading';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -10,7 +10,7 @@ export default function InventoryPage() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
-  const searchParamUserId = searchParams.get('userId');
+  const searchParamUserId = searchParams.get('id');
 
   const [status, setStatus] = useState<{ status: 'inventory' | 'loading' | 'error'; message?: string; userId?: string }>({ status: 'loading' });
 
@@ -20,8 +20,8 @@ export default function InventoryPage() {
     if (!profile.loading) {
       if (searchParamUserId) {
         setStatus({ status: 'inventory', userId: searchParamUserId });
-      } else if (profile && profile.data.id) {
-        setStatus({ status: 'inventory', userId: profile.data.id });
+      } else if (profile && profile?.data?.id) {
+        setStatus({ status: 'inventory', userId: profile?.data?.id });
       } else {
         setStatus({
           status: 'error',
