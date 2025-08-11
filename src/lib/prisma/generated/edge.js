@@ -181,7 +181,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/dean/SparkhubSubmission2025/src/lib/prisma/generated",
+      "value": "/Users/kevinboriboonsomsin/GitHub/SparkhubSubmission2025/src/lib/prisma/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -192,14 +192,19 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/dean/SparkhubSubmission2025/prisma/schema.prisma",
+    "sourceFilePath": "/Users/kevinboriboonsomsin/GitHub/SparkhubSubmission2025/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../../../.env"
   },
   "relativePath": "../../../../prisma",
   "clientVersion": "6.13.0",
@@ -208,7 +213,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": true,
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -217,8 +222,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/lib/prisma/generated\"\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n}\n\nmodel User {\n  id               String     @id\n  email            String     @unique\n  name             String\n  contactInfo      String?\n  createdAt        DateTime   @default(now())\n  updatedAt        DateTime   @updatedAt\n  newNotifications Boolean    @default(false)\n  notifications    String[]   @default([])\n  role             String\n  jobsCreated      Job[]      @relation(\"JobHirer\")\n  jobsWorking      Job[]      @relation(\"JobWorker\")\n  offerings        Offering[] @relation(\"Offerings\")\n  ratingFrom       Rating[]   @relation(\"RatingFrom\")\n  ratingTo         Rating[]   @relation(\"RatingTo\")\n  applications     Job[]      @relation(\"JobApplications\")\n\n  @@map(\"users\")\n}\n\nmodel Job {\n  id           String    @id @default(cuid())\n  title        String\n  description  String\n  location     String\n  status       JobStatus @default(SEARCHING)\n  hirerId      String\n  workerId     String?\n  createdAt    DateTime  @default(now())\n  updatedAt    DateTime  @updatedAt\n  payment      Int\n  hirer        User      @relation(\"JobHirer\", fields: [hirerId], references: [id], onDelete: Cascade)\n  worker       User?     @relation(\"JobWorker\", fields: [workerId], references: [id])\n  ratings      Rating[]\n  applications User[]    @relation(\"JobApplications\")\n\n  @@index([status])\n  @@index([location])\n  @@index([createdAt])\n  @@map(\"jobs\")\n}\n\nmodel Rating {\n  id        String     @id @default(cuid())\n  value     Int\n  text      String?\n  type      RatingType\n  fromId    String\n  toId      String\n  jobId     String\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n  from      User       @relation(\"RatingFrom\", fields: [fromId], references: [id], onDelete: Cascade)\n  job       Job        @relation(fields: [jobId], references: [id])\n  to        User       @relation(\"RatingTo\", fields: [toId], references: [id], onDelete: Cascade)\n\n  @@index([type])\n  @@map(\"ratings\")\n}\n\nmodel Offering {\n  id          String   @id @default(cuid())\n  description String\n  cost        Int\n  quantity    Int?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  userId      String\n  owner       User     @relation(\"Offerings\", fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"offerings\")\n}\n\nenum JobStatus {\n  SEARCHING\n  IN_PROGRESS\n  COMPLETED\n}\n\nenum RatingType {\n  HIRER\n  WORKER\n}\n",
-  "inlineSchemaHash": "abe19cb51287eab5488f35f4be3565ab4d007670e959d87636911b11a83d2a81",
+  "inlineSchema": "generator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/lib/prisma/generated\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider  = \"postgresql\"\n  url       = env(\"DATABASE_URL\")\n  directUrl = env(\"DIRECT_URL\")\n}\n\nmodel User {\n  id               String     @id\n  email            String     @unique\n  name             String\n  contactInfo      String?\n  createdAt        DateTime   @default(now())\n  updatedAt        DateTime   @updatedAt\n  newNotifications Boolean    @default(false)\n  notifications    String[]   @default([])\n  role             String\n  jobsCreated      Job[]      @relation(\"JobHirer\")\n  jobsWorking      Job[]      @relation(\"JobWorker\")\n  offerings        Offering[] @relation(\"Offerings\")\n  ratingFrom       Rating[]   @relation(\"RatingFrom\")\n  ratingTo         Rating[]   @relation(\"RatingTo\")\n  applications     Job[]      @relation(\"JobApplications\")\n\n  @@map(\"users\")\n}\n\nmodel Job {\n  id           String    @id @default(cuid())\n  title        String\n  description  String\n  location     String\n  status       JobStatus @default(SEARCHING)\n  hirerId      String\n  workerId     String?\n  createdAt    DateTime  @default(now())\n  updatedAt    DateTime  @updatedAt\n  payment      Int\n  hirer        User      @relation(\"JobHirer\", fields: [hirerId], references: [id], onDelete: Cascade)\n  worker       User?     @relation(\"JobWorker\", fields: [workerId], references: [id])\n  ratings      Rating[]\n  applications User[]    @relation(\"JobApplications\")\n\n  @@index([status])\n  @@index([location])\n  @@index([createdAt])\n  @@map(\"jobs\")\n}\n\nmodel Rating {\n  id        String     @id @default(cuid())\n  value     Int\n  text      String?\n  type      RatingType\n  fromId    String\n  toId      String\n  jobId     String\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n  from      User       @relation(\"RatingFrom\", fields: [fromId], references: [id], onDelete: Cascade)\n  job       Job        @relation(fields: [jobId], references: [id])\n  to        User       @relation(\"RatingTo\", fields: [toId], references: [id], onDelete: Cascade)\n\n  @@index([type])\n  @@map(\"ratings\")\n}\n\nmodel Offering {\n  id          String   @id @default(cuid())\n  description String\n  cost        Int\n  quantity    Int?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  userId      String\n  owner       User     @relation(\"Offerings\", fields: [userId], references: [id], onDelete: Cascade)\n\n  @@map(\"offerings\")\n}\n\nenum JobStatus {\n  SEARCHING\n  IN_PROGRESS\n  COMPLETED\n}\n\nenum RatingType {\n  HIRER\n  WORKER\n}\n",
+  "inlineSchemaHash": "28bb5160395d766c97b879029801f39dc33354435ec023167490edda978cae42",
   "copyEngine": true
 }
 config.dirname = '/'
